@@ -138,7 +138,7 @@ body {
 .popup-content .popup-date {
   margin: 0 0 var(--spacing-xs);
   font-size: 0.875rem;
-  color: var(--color-text-muted);
+  color: var(--color-text);
 }
 
 .popup-content .popup-placeholder {
@@ -177,35 +177,42 @@ body {
   text-decoration-style: solid;
 }
 
-.popup-content .popup-description {
-  margin: 0 0 var(--spacing-sm);
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-}
-
 .popup-content .popup-actions {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+.popup-content .popup-body {
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.popup-content .popup-description {
+  margin: 0 0 var(--spacing-xs);
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
 }
 
 .leaflet-popup-content button.read-more {
-  background: var(--color-primary);
-  color: #fff;
+  background: none;
   border: none;
-  border-radius: 4px;
-  padding: var(--spacing-xs) var(--spacing-sm);
-  font-family: var(--font-family);
-  font-size: 0.875rem;
-  font-weight: 500;
+  padding: 0;
   cursor: pointer;
-  text-align: left;
-  transition: background-color 0.15s ease;
-  margin-bottom: 0.25rem;
+  font-family: var(--font-family);
+  font-size: 0.8125rem;
+  color: var(--color-focus);
+  text-decoration: underline;
+  margin-top: 0.25rem;
 }
 
 .leaflet-popup-content button.read-more:hover {
-  background: var(--color-primary-dark);
+  color: var(--color-primary);
 }
 
 .popup-content .popup-link-row {

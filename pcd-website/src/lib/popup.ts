@@ -25,6 +25,13 @@ export function makePopupContent(node: Node): string {
     ? `${node.venue}, ${node.address}`
     : `${node.venue}, ${node.city}, ${node.country}`;
   const icsDataUri = `data:text/calendar;charset=utf-8,${encodeURIComponent(icsContent)}`;
+  const date = escapeHtml(formatDate(node.date));
+  const location = escapeHtml(`${node.city}, ${node.country}`);
+  const descriptionParagraphs = node.description
+    .split(/\n\n+/)
+    .filter(Boolean)
+    .map(p => `<p class="popup-description">${escapeHtml(p)}</p>`)
+    .join('');
 
   const placeholderBanner = node.placeholder
     ? `<div class="popup-placeholder">&#9888; This is placeholder data. No real event has been confirmed at this location.</div>`
@@ -34,13 +41,11 @@ export function makePopupContent(node: Node): string {
     <div class="popup-content">
       ${placeholderBanner}
       <h3 class="popup-name">${escapeHtml(node.name)}</h3>
-      <p class="popup-date">${escapeHtml(formatDate(node.date))}</p>
+      <p class="popup-date"><strong>${date} &middot; ${location}</strong></p>
       <p class="popup-venue">
         ${ICON_PIN}<a href="${escapeHtml(osmUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(venueText)}</a>
       </p>
-      <p class="popup-description">${escapeHtml(node.description)}</p>
       <div class="popup-actions">
-        <button class="read-more" data-node-id="${escapeHtml(node.id)}">Read more</button>
         <div class="popup-link-row">
           ${ICON_GLOBE}<a href="${escapeHtml(node.website)}" target="_blank" rel="noopener noreferrer" class="popup-link">Visit event website</a>
         </div>
@@ -52,6 +57,10 @@ export function makePopupContent(node: Node): string {
         <div class="popup-link-row">
           ${ICON_EMAIL}<a href="mailto:${escapeHtml(node.organizer_email)}" class="popup-link">${escapeHtml(node.organizer_email)}</a>
         </div>
+      </div>
+      <div class="popup-body">
+        ${descriptionParagraphs}
+        <button class="read-more" data-node-id="${escapeHtml(node.id)}">Read more &rarr;</button>
       </div>
     </div>
   `.trim();
