@@ -72,9 +72,13 @@ function handleKeydown(e: KeyboardEvent) {
 onMounted(async () => {
   const L = (await import('leaflet')).default;
   await import('leaflet.markercluster');
+  await import('@luomus/leaflet-smooth-wheel-zoom');
 
   const map = L.map('map', {
     zoomControl: true,
+    scrollWheelZoom: false,
+    smoothWheelZoom: true,
+    smoothSensitivity: 1,
   });
   mapInstance = map;
 

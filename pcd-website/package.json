@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@astrojs/vue": "^5.1.4",
+    "@luomus/leaflet-smooth-wheel-zoom": "^1.0.0",
     "astro": "^5.17.1",
     "focus-trap": "^8.0.0",
     "leaflet": "^1.9.4",
