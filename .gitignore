@@ -1,0 +1,21 @@
+# Node.js
+node_modules/
+dist/
+build/
+*.log
+.env*
+.env.local
+.env.*.local
+
+# Astro
+.astro/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.tmp

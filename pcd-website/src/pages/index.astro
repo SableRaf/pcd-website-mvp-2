@@ -1,0 +1,40 @@
+---
+import { loadNodes } from '../lib/nodes';
+import MapView from '../components/MapView.vue';
+import '../styles/global.css';
+
+const nodes = loadNodes();
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Processing Community Day 2026</title>
+    <meta name="description" content="Explore Processing Community Day 2026 nodes around the world. Find your local event on the interactive map." />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
+      crossorigin=""
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
+      crossorigin=""
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+  </head>
+  <body>
+    <a href="#map" class="skip-link">Skip to map</a>
+    <MapView nodes={nodes} client:only="vue" />
+  </body>
+</html>

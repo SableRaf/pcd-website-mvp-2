@@ -1,0 +1,55 @@
+{
+  "nodes": [
+    {
+      "id": "pcd-berlin-2026",
+      "name": "PCD @ Berlin",
+      "city": "Berlin",
+      "country": "Germany",
+      "venue": "Prachtsaal",
+      "address": "Jonasstraße 22, 12053 Berlin",
+      "date": "2026-10-17",
+      "plus_code": "9F4MGCFM+PF",
+      "website": "https://creativecode.berlin",
+      "description": "A full-day event celebrating creative coding in Berlin.",
+      "long_description": "Join us for a full day of talks, workshops, and demos exploring the intersection of code, art, and design. Open to all skill levels.",
+      "organizer_email": "organizer@creativecode.berlin"
+    },
+    {
+      "id": "pcd-tokyo-2026",
+      "name": "PCD @ Tokyo",
+      "city": "Tokyo",
+      "country": "Japan",
+      "venue": "Shibuya Stream Hall",
+      "date": "2026-10-10",
+      "plus_code": "8Q7XJQGW+P3",
+      "website": "https://pcd.tokyo",
+      "description": "Tokyo's annual creative coding gathering.",
+      "organizer_email": "hello@pcd.tokyo"
+    },
+    {
+      "id": "pcd-new-york-2026",
+      "name": "PCD @ New York",
+      "city": "New York",
+      "country": "United States",
+      "venue": "Pioneer Works",
+      "address": "159 Pioneer St, Brooklyn, NY 11231",
+      "date": "2026-10-24",
+      "plus_code": "87G7MPVQ+V9",
+      "website": "https://pioneerworks.org",
+      "description": "New York's creative coding community comes together for a day of exploration and experimentation.",
+      "organizer_email": "pcd@pioneerworks.org"
+    },
+    {
+      "id": "pcd-sao-paulo-2026",
+      "name": "PCD @ São Paulo",
+      "city": "São Paulo",
+      "country": "Brazil",
+      "venue": "Ateliê397",
+      "date": "2026-10-17",
+      "plus_code": "588MC3Q6+R3",
+      "website": "https://atelie397.com.br",
+      "description": "Celebrating creative coding in the heart of Latin America.",
+      "organizer_email": "pcd@atelie397.com.br"
+    }
+  ]
+}
