@@ -12,7 +12,8 @@
       "website": "https://creativecode.berlin",
       "description": "A full-day event celebrating creative coding in Berlin.",
       "long_description": "Join us in Berlin for a full day celebrating 25 years of Processing — the open-source language and environment that has shaped creative coding, data art, and computational design around the world.\n\nThe day kicks off with a keynote reflecting on Processing's roots in the MIT Media Lab and its evolution into p5.js, Processing for Android, and a global community of artists, educators, and engineers. From there, the schedule branches into parallel tracks: hands-on workshops for beginners and a talks programme for practitioners.\n\nWorkshops will cover generative typography, real-time audio-visual performance with Minim, and building interactive installations with physical sensors. All skill levels are welcome — bring your laptop and curiosity.\n\nThe afternoon closes with an open showcase where attendees demo their own work: sketches, installations, printed pieces, and live-coded performances. A casual networking reception follows in Prachtsaal's courtyard.\n\nAdmission is free; registration is required for workshop seats. Light snacks and drinks provided.",
-      "organizer_email": "organizer@creativecode.berlin"
+      "organizer_email": "organizer@creativecode.berlin",
+      "placeholder": true
     },
     {
       "id": "pcd-tokyo-2026",
@@ -24,7 +25,8 @@
       "plus_code": "8Q7XJQGW+P3",
       "website": "https://pcd.tokyo",
       "description": "Tokyo's annual creative coding gathering.",
-      "organizer_email": "hello@pcd.tokyo"
+      "organizer_email": "hello@pcd.tokyo",
+      "placeholder": true
     },
     {
       "id": "pcd-new-york-2026",
@@ -38,7 +40,8 @@
       "website": "https://pioneerworks.org",
       "description": "New York's creative coding community comes together for a day of exploration and experimentation.",
       "long_description": "Join us in New York for a day of creative coding workshops and live performances celebrating 25 years of Processing. The event will take place at Pioneer Works, a vibrant cultural center in Brooklyn known for fostering interdisciplinary collaboration.\n\nThe day will feature hands-on workshops covering topics such as generative art, interactive installations, and creative coding with p5.js. These workshops are designed for all skill levels, from beginners to experienced coders.\n\nIn addition to the workshops, there will be live performances throughout the day showcasing the work of artists who have been inspired by Processing. Attendees will have the opportunity to see how Processing has influenced a wide range of creative practices, from visual art to music and performance.\n\nWhether you're a seasoned coder or just curious about creative coding, PCD @ New York offers something for everyone. Join us for a day of learning, inspiration, and community celebration.",
-      "organizer_email": "pcd@pioneerworks.org"
+      "organizer_email": "pcd@pioneerworks.org",
+      "placeholder": true
     },
     {
       "id": "pcd-sao-paulo-2026",
@@ -50,7 +53,8 @@
       "plus_code": "588MC3Q6+R3",
       "website": "https://atelie397.com.br",
       "description": "Celebrating creative coding in the heart of Latin America.",
-      "organizer_email": "pcd@atelie397.com.br"
+      "organizer_email": "pcd@atelie397.com.br",
+      "placeholder": true
     },
     {
       "id": "pcd-london-2026",
@@ -63,7 +67,8 @@
       "plus_code": "9C3XGWPX+CQ",
       "website": "https://example.co.uk/pcd",
       "description": "A full day of creative coding talks, workshops, and community building.",
-      "organizer_email": "organizer@example.co.uk"
+      "organizer_email": "organizer@example.co.uk",
+      "placeholder": true
     },
     {
       "id": "pcd-barcelona-2026",
@@ -76,7 +81,8 @@
       "plus_code": "8FH49RMJ+4X",
       "website": "https://example.es/pcd",
       "description": "Jornada de código creativo y arte digital en Barcelona.",
-      "organizer_email": "organizer@example.es"
+      "organizer_email": "organizer@example.es",
+      "placeholder": true
     },
     {
       "id": "pcd-nairobi-2026",
@@ -89,7 +95,8 @@
       "plus_code": "6GCRMQCX+3W",
       "website": "https://example.co.ke/pcd",
       "description": "Bringing together artists, coders, and makers across East Africa. Join us for workshops, talks, and networking opportunities to foster collaboration and innovation.",
-      "organizer_email": "organizer@example.co.ke"
+      "organizer_email": "organizer@example.co.ke",
+      "placeholder": true
     },
     {
       "id": "pcd-melbourne-2026",
@@ -102,7 +109,8 @@
       "plus_code": "4RJ625RH+7V",
       "website": "https://example.com.au/pcd",
       "description": "Workshops, demos, and community talks at Melbourne's screen culture hub. Join us for a day of creative exploration and networking with fellow artists and coders.",
-      "organizer_email": "organizer@example.com.au"
+      "organizer_email": "organizer@example.com.au",
+      "placeholder": true
     },
     {
       "id": "pcd-amsterdam-2026",
@@ -115,7 +123,8 @@
       "plus_code": "9F469WFW+9W",
       "website": "https://example.nl/pcd",
       "description": "Open labs, lightning talks, and collective sketching in Amsterdam. Join us for a day of experimentation and community building at the Waag Futurelab, where artists and coders come together to explore the creative possibilities of code.",
-      "organizer_email": "organizer@example.nl"
+      "organizer_email": "organizer@example.nl",
+      "placeholder": true
     },
     {
       "id": "pcd-seoul-2026",
@@ -128,7 +137,8 @@
       "plus_code": "8Q98WCHJ+VF",
       "website": "https://example.kr/pcd",
       "description": "Art and technology converge at Seoul's annual Processing Community Day. Join us for workshops, talks, and a showcase of creative coding projects from Korea and around the world.",
-      "organizer_email": "organizer@example.kr"
+      "organizer_email": "organizer@example.kr",
+      "placeholder": true
     }
   ]
 }

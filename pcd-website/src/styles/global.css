@@ -141,18 +141,40 @@ body {
   color: var(--color-text-muted);
 }
 
+.popup-content .popup-placeholder {
+  background: #fffbea;
+  border: 1px solid #e8b84b;
+  border-radius: 4px;
+  padding: 0.5rem 0.625rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  margin-bottom: 0.625rem;
+  color: #6b4c00;
+}
+
 .popup-content .popup-venue {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.3rem;
   margin: 0 0 var(--spacing-sm);
   font-size: 0.875rem;
 }
 
+.popup-content .popup-venue .popup-icon {
+  flex-shrink: 0;
+  margin-top: 0.1em;
+  color: var(--color-text-muted);
+}
+
 .popup-content .popup-venue a {
-  color: var(--color-focus);
-  text-decoration: none;
+  color: var(--color-text);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
 }
 
 .popup-content .popup-venue a:hover {
-  text-decoration: underline;
+  text-decoration-style: solid;
 }
 
 .popup-content .popup-description {
@@ -164,7 +186,7 @@ body {
 .popup-content .popup-actions {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
+  gap: 0.3rem;
 }
 
 .leaflet-popup-content button.read-more {
@@ -179,10 +201,27 @@ body {
   cursor: pointer;
   text-align: left;
   transition: background-color 0.15s ease;
+  margin-bottom: 0.25rem;
 }
 
 .leaflet-popup-content button.read-more:hover {
   background: var(--color-primary-dark);
+}
+
+.popup-content .popup-link-row {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.popup-content .popup-link-row .popup-icon {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+}
+
+.popup-content .popup-link-sep {
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
 }
 
 .popup-content .popup-link {

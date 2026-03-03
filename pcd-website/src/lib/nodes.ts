@@ -21,6 +21,7 @@ export interface Node {
   description: string;
   long_description?: string;
   organizer_email: string;
+  placeholder?: boolean;
 }
 
 interface NodeInput {
@@ -36,6 +37,7 @@ interface NodeInput {
   description: string;
   long_description?: string;
   organizer_email: string;
+  placeholder?: boolean;
 }
 
 export function loadNodes(): Node[] {
