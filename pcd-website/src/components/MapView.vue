@@ -79,10 +79,11 @@ onMounted(async () => {
     scrollWheelZoom: false,
     smoothWheelZoom: true,
     smoothSensitivity: 1,
+    minZoom: 2.5,
   });
   mapInstance = map;
 
-  map.fitWorld();
+  map.setView([20, 10], 3);
 
   // CartoDB light-no-labels tile layer (monochrome, no POI)
   const tileLayer = L.tileLayer(

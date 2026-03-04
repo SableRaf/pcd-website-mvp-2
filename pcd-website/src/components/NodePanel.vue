@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { createFocusTrap, type FocusTrap } from 'focus-trap';
+import { Icon } from '@iconify/vue';
 import type { Node } from '../lib/nodes';
 import { formatDate, calendarLinks } from '../lib/format';
 
@@ -104,7 +105,7 @@ function getParagraphs(text: string): string[] {
         <p class="panel-meta">{{ formatDate(node.date) }}</p>
 
         <p class="panel-venue">
-          <svg class="panel-icon" width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1a5 5 0 0 0-5 5c0 3.5 5 9 5 9s5-5.5 5-9a5 5 0 0 0-5-5zm0 6.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>
+          <Icon icon="bi:geo-alt-fill" class="panel-icon" width="14" height="14" aria-hidden="true" />
           <a :href="getOsmUrl(node)" target="_blank" rel="noopener noreferrer">{{ getVenueText(node) }}</a>
         </p>
 
@@ -117,12 +118,12 @@ function getParagraphs(text: string): string[] {
 
         <div class="panel-links">
           <div class="panel-link-row">
-            <svg class="panel-icon" width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm4.93 6H11.5c-.1-1.4-.45-2.66-.97-3.65A5.51 5.51 0 0 1 12.93 7zM8 2.1c.7.9 1.22 2.24 1.46 3.9H6.54C6.78 4.34 7.3 3 8 2.1zM2.5 9h1.43c.1 1.4.45 2.66.97 3.65A5.51 5.51 0 0 1 2.5 9zm1.57-2h-1.5a5.51 5.51 0 0 1 2.46-3.65C4.51 4.34 4.16 5.6 4.07 7zm1.47 0c.24-1.56.76-2.9 1.46-3.9C7.7 4.1 8.22 5.44 8.46 7H5.54zm0 2h2.92c-.24 1.56-.76 2.9-1.46 3.9-.7-1-1.22-2.34-1.46-3.9zm3.46 3.65c.52-.99.87-2.25.97-3.65h1.43a5.51 5.51 0 0 1-2.4 3.65zm1-5.65c-.1-1.4-.45-2.66-.97-3.65A5.51 5.51 0 0 1 11.93 7h-1.43z"/></svg>
+            <Icon icon="bi:globe" class="panel-icon" width="14" height="14" aria-hidden="true" />
             <a :href="node.website" target="_blank" rel="noopener noreferrer" class="panel-link">Visit event website</a>
           </div>
 
           <div class="panel-link-row panel-link-row--cal">
-            <svg class="panel-icon" width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M11 1v1H5V1H4v1H2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1h-2V1h-1zm2 4H3V3h1v1h1V3h6v1h1V3h1v2zm0 2v7H3V7h10z"/></svg>
+            <Icon icon="bi:calendar" class="panel-icon" width="14" height="14" aria-hidden="true" />
             <a
               :href="calendarLinks(node).googleCalUrl"
               target="_blank"
@@ -130,12 +131,12 @@ function getParagraphs(text: string): string[] {
               class="panel-link"
             >Google Calendar</a>
             <span class="panel-link-sep" aria-hidden="true">&middot;</span>
-            <svg class="panel-icon" width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M11 1v1H5V1H4v1H2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1h-2V1h-1zm2 4H3V3h1v1h1V3h6v1h1V3h1v2zm0 2v7H3V7h10z"/></svg>
+            <Icon icon="bi:calendar" class="panel-icon" width="14" height="14" aria-hidden="true" />
             <button class="panel-link panel-link--btn" @click="downloadIcs(node)">Download .ics</button>
           </div>
 
           <div class="panel-link-row">
-            <svg class="panel-icon" width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3zm1 .5V4l6 3.75L14 4v-.5H2zm0 2.06V13h12V5.56L8 9.25 2 5.56z"/></svg>
+            <Icon icon="bi:envelope-fill" class="panel-icon" width="14" height="14" aria-hidden="true" />
             <a :href="`mailto:${node.organizer_email}`" class="panel-link">{{ node.organizer_email }}</a>
           </div>
         </div>
