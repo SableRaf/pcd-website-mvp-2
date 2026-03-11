@@ -40,7 +40,7 @@ export function makePopupContent(node: Node): string {
       ${venueHtml}
       <div class="popup-body">
         ${descriptionHtml}
-        <button class="read-more" data-node-id="${escapeHtml(node.id)}">Read more &rarr;</button>
+        <button class="read-more" data-node-id="${escapeHtml(node.id)}">See details &rarr;</button>
       </div>
     </div>
   `.trim();
