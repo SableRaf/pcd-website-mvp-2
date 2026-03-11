@@ -12,6 +12,12 @@
   --color-bg-panel: #ffffff;
   --color-border: #e0e0e0;
   --color-overlay: rgba(0, 0, 0, 0.4);
+  --color-callout-placeholder-bg: #fffbea;
+  --color-callout-placeholder-border: #e8b84b;
+  --color-callout-placeholder-text: #6b4c00;
+  --color-callout-unconfirmed-bg: #e8f0fe;
+  --color-callout-unconfirmed-border: #7baaf7;
+  --color-callout-unconfirmed-text: #1a3a6b;
 
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
@@ -110,7 +116,7 @@ body {
 }
 
 #burger-btn:hover {
-  background: #f5f5f5;
+  background: var(--color-border);
 }
 
 /* ─── Leaflet Popup Overrides ───────────────────────────────── */
@@ -142,25 +148,25 @@ body {
 }
 
 .popup-content .popup-placeholder {
-  background: #fffbea;
-  border: 1px solid #e8b84b;
+  background: var(--color-callout-placeholder-bg);
+  border: 1px solid var(--color-callout-placeholder-border);
   border-radius: 4px;
   padding: 0.5rem 0.625rem;
   font-size: 0.8125rem;
   line-height: 1.4;
   margin-bottom: 0.625rem;
-  color: #6b4c00;
+  color: var(--color-callout-placeholder-text);
 }
 
 .popup-content .popup-unconfirmed {
-  background: #e8f0fe;
-  border: 1px solid #7baaf7;
+  background: var(--color-callout-unconfirmed-bg);
+  border: 1px solid var(--color-callout-unconfirmed-border);
   border-radius: 4px;
   padding: 0.5rem 0.625rem;
   font-size: 0.8125rem;
   line-height: 1.4;
   margin-bottom: 0.625rem;
-  color: #1a3a6b;
+  color: var(--color-callout-unconfirmed-text);
 }
 
 .popup-content .popup-unconfirmed a {
@@ -259,6 +265,38 @@ body {
 
 .popup-content .popup-link:hover {
   text-decoration: underline;
+}
+
+/* ─── Dark Mode Tokens ──────────────────────────────────────── */
+[data-theme="dark"] {
+  --color-focus: #79b8ff;
+  --color-text: #e8e8e8;
+  --color-text-muted: #999;
+  --color-bg: #1a1a1a;
+  --color-bg-panel: #242424;
+  --color-border: #3a3a3a;
+  --color-overlay: rgba(0, 0, 0, 0.6);
+  --color-callout-placeholder-bg: #2d2510;
+  --color-callout-placeholder-border: #7a5f18;
+  --color-callout-placeholder-text: #f0c96a;
+  --color-callout-unconfirmed-bg: #0f1e3a;
+  --color-callout-unconfirmed-border: #2c5099;
+  --color-callout-unconfirmed-text: #8ab4f8;
+}
+
+/* ─── Leaflet Popup Dark Mode ───────────────────────────────── */
+[data-theme="dark"] {
+  .leaflet-popup-content-wrapper,
+  .leaflet-popup-tip {
+    background: var(--color-bg-panel);
+    color: var(--color-text);
+  }
+  .leaflet-popup-close-button {
+    color: var(--color-text-muted) !important;
+  }
+  .leaflet-popup-close-button:hover {
+    color: var(--color-text) !important;
+  }
 }
 
 /* ─── Marker Cluster Overrides ──────────────────────────────── */

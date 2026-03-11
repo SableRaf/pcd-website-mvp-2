@@ -86,6 +86,7 @@ function setMapStyle(styleId: string, map: import('leaflet').Map, L: typeof impo
   });
   currentStyle.value = styleId;
   localStorage.setItem(STORAGE_KEY, styleId);
+  document.documentElement.dataset.theme = styleId === 'dark' ? 'dark' : 'light';
 }
 
 function onStyleChange(styleId: string) {

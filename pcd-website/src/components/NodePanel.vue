@@ -94,6 +94,7 @@ watch(
   }
 );
 
+
 function downloadIcs(node: Node) {
   const { icsContent } = calendarLinks(node);
   const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
@@ -238,7 +239,7 @@ function getParagraphs(text: string): string[] {
 }
 
 .panel-close:hover {
-  background: #f5f5f5;
+  background: var(--color-border);
 }
 
 .panel-content {
@@ -246,25 +247,25 @@ function getParagraphs(text: string): string[] {
 }
 
 .panel-placeholder {
-  background: #fffbea;
-  border: 1px solid #e8b84b;
+  background: var(--color-callout-placeholder-bg);
+  border: 1px solid var(--color-callout-placeholder-border);
   border-radius: 4px;
   padding: 0.625rem 0.875rem;
   font-size: 0.875rem;
   line-height: 1.45;
   margin-bottom: 1rem;
-  color: #6b4c00;
+  color: var(--color-callout-placeholder-text);
 }
 
 .panel-unconfirmed {
-  background: #e8f0fe;
-  border: 1px solid #7baaf7;
+  background: var(--color-callout-unconfirmed-bg);
+  border: 1px solid var(--color-callout-unconfirmed-border);
   border-radius: 4px;
   padding: 0.625rem 0.875rem;
   font-size: 0.875rem;
   line-height: 1.45;
   margin-bottom: 1rem;
-  color: #1a3a6b;
+  color: var(--color-callout-unconfirmed-text);
 }
 
 .panel-unconfirmed a {
