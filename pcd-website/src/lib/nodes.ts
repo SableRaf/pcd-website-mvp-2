@@ -20,7 +20,7 @@ export interface Node {
   start_date: string;
   end_date?: string;
   website: string;
-  description: string;
+  short_description: string;
   long_description?: string;
   tags: string[];
   organizers: string[];
@@ -43,7 +43,7 @@ interface NodeInput {
   start_date: string;
   end_date?: string;
   website: string;
-  description: string;
+  short_description: string;
   long_description?: string;
   tags: string[];
   organizers: string[];

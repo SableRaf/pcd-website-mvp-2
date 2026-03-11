@@ -114,7 +114,7 @@ function getParagraphs(text: string): string[] {
 
         <div class="panel-description">
           <p
-            v-for="(para, i) in getParagraphs(node.long_description ?? node.description)"
+            v-for="(para, i) in getParagraphs(node.long_description || node.short_description)"
             :key="i"
           >{{ para }}</p>
         </div>
