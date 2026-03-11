@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { ref, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import { createFocusTrap, type FocusTrap } from 'focus-trap';
 import { Icon } from '@iconify/vue';
 import type { Node } from '../lib/nodes';
 import { formatDateRange, calendarLinks } from '../lib/format';
+import L from 'leaflet';
 
 const props = defineProps<{
   node: Node | null;
@@ -15,7 +16,9 @@ const emit = defineEmits<{
 
 const panelRef = ref<HTMLElement | null>(null);
 const closeButtonRef = ref<HTMLButtonElement | null>(null);
+const minimapRef = ref<HTMLDivElement | null>(null);
 let trap: FocusTrap | null = null;
+let minimap: L.Map | null = null;
 
 onMounted(() => {
   if (panelRef.value) {
@@ -32,15 +35,60 @@ onMounted(() => {
 
 onUnmounted(() => {
   trap?.deactivate();
+  destroyMinimap();
 });
+
+function destroyMinimap() {
+  if (minimap) {
+    minimap.remove();
+    minimap = null;
+  }
+}
+
+async function initMinimap(node: Node) {
+  await nextTick();
+  if (!minimapRef.value) return;
+  destroyMinimap();
+
+  minimap = L.map(minimapRef.value, {
+    center: [node.lat, node.lng],
+    zoom: 16,
+    zoomControl: false,
+    attributionControl: false,
+    dragging: false,
+    scrollWheelZoom: false,
+    doubleClickZoom: false,
+    boxZoom: false,
+    keyboard: false,
+    touchZoom: false,
+  });
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    subdomains: 'abcd',
+    maxZoom: 20,
+  }).addTo(minimap);
+
+  const pinIcon = L.divIcon({
+    className: '',
+    html: `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="36" viewBox="0 0 28 36">
+      <path d="M14 0C6.268 0 0 6.268 0 14c0 9.333 14 22 14 22S28 23.333 28 14C28 6.268 21.732 0 14 0z" fill="#3b5fc0"/>
+      <circle cx="14" cy="14" r="5.5" fill="#ffffff"/>
+    </svg>`,
+    iconSize: [28, 36],
+    iconAnchor: [14, 36],
+  });
+  L.marker([node.lat, node.lng], { icon: pinIcon }).addTo(minimap);
+}
 
 watch(
   () => props.node,
   (newNode) => {
     if (newNode) {
       trap?.activate();
+      initMinimap(newNode);
     } else {
       trap?.deactivate();
+      destroyMinimap();
       document.getElementById('map')?.focus();
     }
   }
@@ -104,6 +152,8 @@ function getParagraphs(text: string): string[] {
           <Icon icon="bi:geo-alt-fill" class="panel-icon" width="14" height="14" aria-hidden="true" />
           <a :href="getOsmUrl(node)" target="_blank" rel="noopener noreferrer">{{ node.venue }}<br>{{ node.address || `${node.city}, ${node.country}` }}</a>
         </p>
+
+        <div ref="minimapRef" class="panel-minimap" aria-hidden="true"></div>
 
         <div class="panel-description">
           <p
@@ -257,6 +307,14 @@ function getParagraphs(text: string): string[] {
 
 .panel-venue a:hover {
   text-decoration-style: solid;
+}
+
+.panel-minimap {
+  width: calc(100% + 3rem);
+  margin-left: -1.5rem;
+  aspect-ratio: 18 / 9;
+  margin-bottom: 1.25rem;
+  overflow: hidden;
 }
 
 .panel-description {
