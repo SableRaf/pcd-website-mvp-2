@@ -221,10 +221,6 @@ async function share(node: Node) {
           </button>
         </div>
         <div class="panel-byline">
-          <p v-if="node.online" class="panel-online-badge">
-            <Icon icon="bi:wifi" width="13" height="13" aria-hidden="true" />
-            {{ onlinePlatformName(node.online_url) }}
-          </p>
           <p v-if="node.organizing_entity" class="panel-organizing-entity">
             <span class="panel-label">by</span> {{ node.organizing_entity }}
           </p>
@@ -254,27 +250,33 @@ async function share(node: Node) {
           <hr class="info-card-divider" aria-hidden="true" />
 
           <!-- Row 2: Venue + address (OSM link) or Online platform -->
-          <div class="info-card-row">
-            <Icon :icon="node.online ? 'bi:wifi' : 'bi:geo-alt-fill'" width="18" height="18" aria-hidden="true" class="info-card-icon" />
-            <div class="info-card-venue">
-              <span class="info-card-venue-name">{{ node.online ? onlinePlatformName(node.online_url) : node.venue }}</span>
-              <a
-                v-if="node.online && node.online_url"
-                :href="node.online_url"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="info-card-venue-address"
-                title="Join the online event"
-              >{{ node.online_url }}</a>
-              <a
-                v-else-if="!node.online"
-                :href="getOsmUrl(node)"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="info-card-venue-address"
-                title="Get directions on OpenStreetMap"
-              >{{ node.address || `${node.city}, ${node.country}` }}</a>
+          <div class="info-card-row info-card-venue-row">
+            <div class="info-card-row-leading">
+              <Icon icon="bi:link-45deg" width="18" height="18" aria-hidden="true" class="info-card-icon" />
+              <div class="info-card-venue">
+                <span class="info-card-venue-name">{{ node.online ? onlinePlatformName(node.online_url) : node.venue }}</span>
+                <a
+                  v-if="node.online && node.online_url"
+                  :href="node.online_url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="info-card-venue-address"
+                  title="Join the online event"
+                >{{ node.online_url }}</a>
+                <a
+                  v-else-if="!node.online"
+                  :href="getOsmUrl(node)"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="info-card-venue-address"
+                  title="Get directions on OpenStreetMap"
+                >{{ node.address || `${node.city}, ${node.country}` }}</a>
+              </div>
             </div>
+            <p v-if="node.online" class="panel-online-badge info-card-online-badge">
+              <Icon icon="bi:wifi" width="13" height="13" aria-hidden="true" />
+              Online Event
+            </p>
           </div>
           <hr class="info-card-divider" aria-hidden="true" />
 
@@ -589,6 +591,12 @@ async function share(node: Node) {
   padding: 0.2em 0.55em;
 }
 
+.info-card-online-badge {
+  margin: 0;
+  align-self: flex-start;
+  white-space: nowrap;
+}
+
 .info-card-tbd {
   font-style: italic;
   color: var(--color-text-muted);
@@ -662,6 +670,17 @@ async function share(node: Node) {
   display: flex;
   align-items: flex-start;
   gap: 0.625rem;
+}
+
+.info-card-row-leading {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  flex: 1;
+}
+
+.info-card-row.info-card-venue-row {
+  justify-content: space-between;
 }
 
 .info-card-icon {

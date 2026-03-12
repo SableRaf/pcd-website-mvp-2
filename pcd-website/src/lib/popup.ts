@@ -1,5 +1,5 @@
 import type { Node } from './nodes';
-import { formatPopupDate, onlinePlatformName } from './format';
+import { formatPopupDate } from './format';
 
 export function escapeHtml(str: string): string {
   return str
@@ -11,6 +11,16 @@ export function escapeHtml(str: string): string {
 }
 
 const POPUP_PREVIEW_LENGTH = 120;
+
+function getOsmUrl(node: Node): string {
+  const components = [
+    node.venue,
+    node.address,
+    node.city,
+    node.country,
+  ].filter(Boolean);
+  return `https://www.openstreetmap.org/search?query=${encodeURIComponent(components.join(', '))}`;
+}
 
 export function makePopupContent(node: Node): string {
   const date = node.date_tbd
@@ -33,13 +43,48 @@ export function makePopupContent(node: Node): string {
     ? `<p class="popup-organizing-entity">by ${escapeHtml(node.organizing_entity)}</p>`
     : '';
 
+  const onlineBadgeHtml = node.online ? '<span class="popup-online-badge">Online Event</span>' : '';
+  const timeHint = !node.date_tbd && node.time_tbd ? ' · Time TBD' : '';
+  const dateLineContent = `${date}${timeHint}`;
+
+  const venueNameHtml = node.online
+    ? ''
+    : `<span class="popup-venue-name">${escapeHtml(node.venue)}</span>`;
+
+  const onlineAddressText = node.online_url ? escapeHtml(node.online_url) : 'Online Event';
+
+  const venueAddressHtml = node.online
+    ? node.online_url
+      ? `<a
+          href="${escapeHtml(node.online_url)}"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="popup-venue-address"
+          title="Join the online event"
+        >${onlineAddressText}</a>`
+      : `<span class="popup-venue-address">${onlineAddressText}</span>`
+    : `<a
+        href="${escapeHtml(getOsmUrl(node))}"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="popup-venue-address"
+        title="Get directions on OpenStreetMap"
+      >${escapeHtml(node.address || `${node.city}, ${node.country}`)}</a>`;
+
   return `
     <div class="popup-content">
       ${placeholderBanner}
-      <h3 class="popup-name">${escapeHtml(node.name)}</h3>
+      <div class="popup-header-row">
+        <h3 class="popup-name">${escapeHtml(node.name)}</h3>
+        ${onlineBadgeHtml}
+      </div>
       ${organizingEntityHtml}
       <div class="popup-info-card">
-        <p class="popup-date">${node.online ? onlinePlatformName(node.online_url) : `${date} at ${escapeHtml(node.venue)}`}${node.time_tbd && !node.date_tbd ? ' · Time TBD' : ''}</p>
+        <p class="popup-date">${dateLineContent}</p>
+        <div class="popup-venue">
+          ${venueNameHtml}
+          ${venueAddressHtml}
+        </div>
       </div>
       <div class="popup-body">
         ${descriptionHtml}
