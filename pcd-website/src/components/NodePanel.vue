@@ -391,7 +391,7 @@ async function share(node: Node) {
 .panel-tab {
   --tab-r: 12px;
   position: absolute;
-  left: 0;
+  left: 1px;
   top: 50%;
   transform: translate(-100%, -50%);
   display: flex;
