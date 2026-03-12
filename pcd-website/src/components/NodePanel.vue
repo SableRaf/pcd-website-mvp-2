@@ -458,7 +458,12 @@ async function share(node: Node) {
 
 .panel-mobile-back {
   display: none;
-  padding: 0.75rem 1rem 0;
+  padding: 0.75rem 1rem 0.625rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--color-bg-panel);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .panel-back-btn {
