@@ -385,13 +385,13 @@ async function share(node: Node) {
   flex-direction: column;
   background: var(--color-bg-panel);
   position: relative;
-  z-index: 1; /* sit above the tab so it covers the tab's right edge junction */
+  z-index: 1;
 }
 
 .panel-tab {
+  --tab-r: 12px;
   position: absolute;
-  /* Extend 4px into the panel so the right edge is hidden under .panel-scroll */
-  left: 4px;
+  left: 0;
   top: 50%;
   transform: translate(-100%, -50%);
   display: flex;
@@ -400,14 +400,50 @@ async function share(node: Node) {
   width: 36px;
   height: 96px;
   background: var(--color-bg-panel);
-  border: 1px solid var(--color-border);
-  border-right: none;
-  border-radius: 12px 0 0 12px;
+  border: none;
   cursor: pointer;
   color: var(--color-text-muted);
   padding: 0;
   z-index: 0;
-  transition: background-color 0.12s ease, color 0.12s ease;
+  /* drop-shadow renders along the clipped shape outline, acting as a border */
+  filter: drop-shadow(-1px 0 0 var(--color-border))
+          drop-shadow(0 -1px 0 var(--color-border))
+          drop-shadow(0 1px 0 var(--color-border));
+  transition: background-color 0.12s ease, color 0.12s ease, filter 0.12s ease;
+  clip-path: shape(
+    /*
+     * Vertical tab, right edge meets the panel.
+     * Adapted from the horizontal tab example by rotating 90° CW:
+     * concave corners on the right, convex on the left.
+     */
+    from top right,
+    /* 1. Concave top-right */
+    curve to calc(100% - var(--tab-r)) var(--tab-r)
+      with 100% var(--tab-r),
+    /* 2. Top edge ← */
+    hline to var(--tab-r),
+    /* 3. Convex top-left */
+    curve to 0 calc(var(--tab-r) * 2)
+      with 0 var(--tab-r),
+    /* 4. Left edge ↓ */
+    vline to calc(100% - calc(var(--tab-r) * 2)),
+    /* 5. Convex bottom-left */
+    curve to var(--tab-r) calc(100% - var(--tab-r))
+      with 0 calc(100% - var(--tab-r)),
+    /* 6. Bottom edge → */
+    hline to calc(100% - var(--tab-r)),
+    /* 7. Concave bottom-right */
+    curve to 100% 100%
+      with 100% calc(100% - var(--tab-r))
+  );
+
+  @supports not (clip-path: shape(from top left, hline to 0)) {
+    left: 4px;
+    border: 1px solid var(--color-border);
+    border-right: none;
+    border-radius: 12px 0 0 12px;
+    clip-path: none;
+  }
 }
 
 .panel-tab:hover {
