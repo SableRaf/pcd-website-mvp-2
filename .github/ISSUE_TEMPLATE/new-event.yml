@@ -1,0 +1,214 @@
+name: New Event
+description: Submit a new Processing Community Day event for the map.
+title: "[New Event]: "
+labels:
+  - New Event
+  - Needs Review
+body:
+  - type: markdown
+    attributes:
+      value: |
+        <!-- new-event-template -->
+        Fill out every required field as completely as possible. Dates must use `YYYY-MM-DD`, times must use 24-hour `HH:MM`, links must include `https://`, and the plus code must be a full global code from `https://plus.codes`.
+  - type: input
+    id: event_name
+    attributes:
+      label: Event name
+      description: Public-facing event title as it should appear on the site.
+      placeholder: PCD @ Example City
+    validations:
+      required: true
+  - type: input
+    id: city
+    attributes:
+      label: City
+      placeholder: Berlin
+    validations:
+      required: true
+  - type: input
+    id: country
+    attributes:
+      label: Country
+      placeholder: Germany
+    validations:
+      required: true
+  - type: dropdown
+    id: region
+    attributes:
+      label: Region
+      options:
+        - Africa
+        - Asia
+        - Europe
+        - North America
+        - Oceania
+        - South America
+        - Global
+    validations:
+      required: true
+  - type: dropdown
+    id: event_format
+    attributes:
+      label: Event format
+      description: Hybrid events should choose the primary format and describe the hybrid setup in the full event description.
+      options:
+        - In person
+        - Online
+    validations:
+      required: true
+  - type: input
+    id: venue
+    attributes:
+      label: Venue or platform name
+      description: Physical venue for in-person events, or platform / host name for online events.
+      placeholder: Example Venue, Zoom, etc.
+    validations:
+      required: true
+  - type: input
+    id: address
+    attributes:
+      label: Street address
+      description: Leave blank only for online events or if the venue is still to be determined. This is used for geocoding the map location, so it should be as specific as possible (including street number when available).
+      placeholder: Jonasstraße 22, 12053 Berlin
+  - type: input
+    id: plus_code
+    attributes:
+      label: Full global plus code in the format XXXXXXXX+XX
+      description: Required for map placement. Do not use a shortened local code. Find or verify the plus code for your event location at https://plus.codes.
+      placeholder: 9F4MFCCM+JF
+    validations:
+      required: true
+  - type: input
+    id: start_date
+    attributes:
+      label: Start date
+      placeholder: 2026-10-17
+    validations:
+      required: true
+  - type: input
+    id: end_date
+    attributes:
+      label: End date
+      placeholder: 2026-10-17
+    validations:
+      required: true
+  - type: input
+    id: start_time
+    attributes:
+      label: Start time
+      description: 24-hour time.
+      placeholder: 19:00
+    validations:
+      required: true
+  - type: input
+    id: end_time
+    attributes:
+      label: End time
+      description: 24-hour time.
+      placeholder: 21:30
+    validations:
+      required: true
+  - type: input
+    id: timezone
+    attributes:
+      label: Timezone abbreviation
+      placeholder: CET
+    validations:
+      required: true
+  - type: input
+    id: website
+    attributes:
+      label: Event website
+      placeholder: https://example.org/pcd
+    validations:
+      required: true
+  - type: input
+    id: contact_email
+    attributes:
+      label: Primary contact email
+      description: Public contact email shown on the event page.
+      placeholder: hello@example.org
+    validations:
+      required: true
+  - type: input
+    id: organizing_entity
+    attributes:
+      label: Organizing entity
+      placeholder: Creative Code Berlin
+    validations:
+      required: true
+  - type: textarea
+    id: organizers
+    attributes:
+      label: Organizers
+      description: One organizer per line. Use `Name <email@example.org>` when possible.
+      placeholder: |-
+        Jane Doe <jane@example.org>
+        Alex Smith <alex@example.org>
+    validations:
+      required: true
+  - type: textarea
+    id: short_description
+    attributes:
+      label: Short description
+      description: One short summary sentence for the map popup and preview UI.
+      placeholder: A local celebration of Processing, creative coding, and community practice in Berlin.
+    validations:
+      required: true
+  - type: textarea
+    id: full_description
+    attributes:
+      label: Full event description
+      description: This becomes the markdown body for the event details page. Use paragraphs, lists, and links as needed.
+      placeholder: |-
+        Tell visitors what the event is about, who it is for, and what to expect.
+    validations:
+      required: true
+  - type: input
+    id: online_url
+    attributes:
+      label: Online event URL
+      description: Required for online events. Leave blank for in-person events.
+      placeholder: https://zoom.us/j/example
+  - type: input
+    id: forum_url
+    attributes:
+      label: Forum discussion URL
+      description: Optional Processing forum thread with updates.
+      placeholder: https://discourse.processing.org/t/pcd-worldwide-2026/48081
+  - type: input
+    id: tags
+    attributes:
+      label: Tags
+      description: Optional comma-separated tags such as workshops, talks, beginners, performance.
+      placeholder: workshops, talks, beginners
+  - type: dropdown
+    id: confirmed
+    attributes:
+      label: Is this event already confirmed?
+      options:
+        - "Yes"
+        - "No"
+    validations:
+      required: true
+  - type: input
+    id: maintainer_name
+    attributes:
+      label: Maintainer name
+      description: Person responsible for keeping this event entry current after publication.
+      placeholder: Jane Doe
+    validations:
+      required: true
+  - type: input
+    id: maintainer_email
+    attributes:
+      label: Maintainer email
+      description: Best contact for follow-up about updates to this event entry.
+      placeholder: jane@example.org
+    validations:
+      required: true
+  - type: textarea
+    id: maintainer_notes
+    attributes:
+      label: Additional notes for maintainers
+      description: Optional context that should not appear publicly on the map.

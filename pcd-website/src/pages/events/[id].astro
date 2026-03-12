@@ -1,0 +1,92 @@
+---
+import { getCollection } from 'astro:content';
+import { loadNodes } from '../../lib/nodes';
+import '../../styles/global.css';
+import { formatDateRange, formatTimeRange, onlinePlatformName } from '../../lib/format';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('events');
+  return entries.map((entry) => ({
+    params: { id: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const nodes = await loadNodes();
+const node = nodes.find((candidate) => candidate.id === entry.data.id);
+
+if (!node) {
+  throw new Error(`Missing node data for event page "${entry.data.id}".`);
+}
+
+const { Content } = await entry.render();
+const eventDate = node.date_tbd
+  ? 'Date TBD'
+  : formatDateRange(node.start_date ?? '', node.end_date);
+const eventTime = !node.date_tbd && node.start_time
+  ? formatTimeRange(node.start_time, node.end_time, node.timezone)
+  : node.time_tbd
+    ? 'Time TBD'
+    : '';
+const locationLabel = node.online
+  ? onlinePlatformName(node.online_url)
+  : node.location_tbd
+    ? 'Location TBD'
+    : node.venue;
+const locationDetail = node.online
+  ? node.online_url
+  : node.location_tbd
+    ? ''
+    : node.address || `${node.city}, ${node.country}`;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{node.name} | Processing Community Day 2026</title>
+    <meta name="description" content={node.short_description || `${node.name} event details`} />
+    <link rel="icon" type="image/x-icon" href={`${import.meta.env.BASE_URL}/favicon.ico`} />
+  </head>
+  <body class="event-page-body">
+    <main class="event-page">
+      <a class="event-page-back" href={`${import.meta.env.BASE_URL}#${node.id}`}>Back to map</a>
+      <article class="event-page-card">
+        <header class="event-page-header">
+          <p class="event-page-kicker">Processing Community Day 2026</p>
+          <h1>{node.name}</h1>
+          {node.organizing_entity && <p class="event-page-entity">by {node.organizing_entity}</p>}
+          {node.short_description && <p class="event-page-summary">{node.short_description}</p>}
+        </header>
+
+        <section class="event-page-meta" aria-label="Event details">
+          <div>
+            <span class="event-page-meta-label">When</span>
+            <strong>{eventDate}</strong>
+            {eventTime && <span>{eventTime}</span>}
+          </div>
+          <div>
+            <span class="event-page-meta-label">Where</span>
+            <strong>{locationLabel}</strong>
+            {locationDetail && <span>{locationDetail}</span>}
+          </div>
+          <div>
+            <span class="event-page-meta-label">Contact</span>
+            <a href={`mailto:${node.contact_email}`}>{node.contact_email}</a>
+            {node.website && (
+              <a href={node.website} target="_blank" rel="noopener noreferrer">
+                Visit event website
+              </a>
+            )}
+          </div>
+        </section>
+
+        <section class="event-page-content">
+          <Content />
+        </section>
+      </article>
+    </main>
+  </body>
+</html>

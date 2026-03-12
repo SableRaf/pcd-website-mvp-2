@@ -275,9 +275,7 @@ onUnmounted(() => {
   <div id="map" tabindex="-1" aria-label="World map of PCD 2026 nodes"></div>
   <a
     id="host-btn"
-    href="https://discourse.processing.org/t/pcd-worldwide-2026/48081"
-    target="_blank"
-    rel="noopener noreferrer"
+    href="https://github.com/SableRaf/pcd-website-mvp-2/issues/new?template=new-event.yml"
   >Want to host a PCD?</a>
   <button
     id="burger-btn"

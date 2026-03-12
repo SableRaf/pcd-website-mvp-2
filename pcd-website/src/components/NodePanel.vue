@@ -156,7 +156,7 @@ function hasMoreHosts(organizers: { name: string; email: string }[]): boolean {
 }
 
 function getDescPreview(node: Node): { text: string; hasMore: boolean } {
-  const full = node.long_description || node.short_description || '';
+  const full = node.details_text || node.short_description || '';
   const paras = getParagraphs(full);
   const first = paras[0] ?? '';
   const truncated = first.length > PANEL_TRUNCATE_LENGTH
@@ -318,7 +318,7 @@ async function share(node: Node) {
         <div class="panel-description">
           <template v-if="descExpanded">
             <p
-              v-for="(para, i) in getParagraphs(node.long_description || node.short_description)"
+              v-for="(para, i) in getParagraphs(node.details_text || node.short_description)"
               :key="i"
             >{{ para }}</p>
           </template>
@@ -358,6 +358,15 @@ async function share(node: Node) {
           >
             <Icon icon="bi:wifi" width="16" height="16" aria-hidden="true" class="panel-link-icon" />
             <span>Join online event</span>
+          </a>
+          <a
+            v-if="node.event_page_path"
+            :href="node.event_page_path"
+            class="panel-link-row"
+            :title="`Open the event page for ${node.name}`"
+          >
+            <Icon icon="bi:file-earmark-text" width="16" height="16" aria-hidden="true" class="panel-link-icon" />
+            <span>Open event page</span>
           </a>
           <a
             v-if="node.contact_email"

@@ -81,7 +81,7 @@ export function calendarLinks(node: Node): { googleCalUrl: string; icsContent: s
     text: node.name,
     dates: `${startDate}/${endDate}`,
     location,
-    details: node.long_description ?? node.short_description,
+    details: node.details_text || node.short_description,
   });
   const googleCalUrl = `https://calendar.google.com/calendar/render?${params.toString()}`;
 
@@ -105,7 +105,7 @@ export function calendarLinks(node: Node): { googleCalUrl: string; icsContent: s
     `DTEND;VALUE=DATE:${endDate}`,
     `SUMMARY:${escapeIcs(node.name)}`,
     `LOCATION:${icsLocation}`,
-    `DESCRIPTION:${escapeIcs(node.long_description ?? node.short_description)}`,
+    `DESCRIPTION:${escapeIcs(node.details_text || node.short_description)}`,
     `URL:${node.website}`,
     'END:VEVENT',
     'END:VCALENDAR',

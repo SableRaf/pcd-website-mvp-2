@@ -1,3 +1,4 @@
+import { getCollection } from 'astro:content';
 import { OpenLocationCode } from 'open-location-code';
 import nodesData from '../data/nodes.json';
 
@@ -30,6 +31,9 @@ export interface Node {
   website: string;
   short_description: string;
   long_description?: string;
+  details_markdown: string;
+  details_text: string;
+  event_page_path?: string;
   tags: string[];
   organizers: { name: string; email: string }[];
   organizing_entity?: string;
@@ -78,9 +82,27 @@ function normalizeOptionalText(value?: string): string | undefined {
   return trimmed ? trimmed : undefined;
 }
 
-export function loadNodes(): Node[] {
+function markdownToText(markdown: string): string {
+  return markdown
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/^\s*>\s?/gm, '')
+    .replace(/^\s*[-*+]\s+/gm, '')
+    .replace(/^\s*\d+\.\s+/gm, '')
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1')
+    .replace(/_([^_]+)_/g, '$1')
+    .trim();
+}
+
+export async function loadNodes(): Promise<Node[]> {
   const olc = new OpenLocationCode();
   const data = nodesData as unknown as { nodes: NodeInput[] };
+  const eventEntries = await getCollection('events');
+  const eventMap = new Map(eventEntries.map((entry) => [entry.data.id, entry]));
 
   return data.nodes.map((input) => {
     if (!olc.isValid(input.plus_code) || !olc.isFull(input.plus_code)) {
@@ -98,6 +120,9 @@ export function loadNodes(): Node[] {
     const start_time = normalizeOptionalText(input.start_time);
     const end_time = normalizeOptionalText(input.end_time);
     const location_tbd = !input.online && !venue && !address;
+    const eventEntry = eventMap.get(input.id);
+    const details_markdown = normalizeOptionalText(eventEntry?.body) ?? normalizeOptionalText(input.long_description) ?? '';
+    const details_text = markdownToText(details_markdown);
 
     return {
       ...input,
@@ -110,6 +135,9 @@ export function loadNodes(): Node[] {
       date_tbd: !start_date,
       time_tbd: !!start_date && !start_time,
       location_tbd,
+      details_markdown,
+      details_text,
+      event_page_path: eventEntry ? `${import.meta.env.BASE_URL}events/${eventEntry.slug}/` : undefined,
       lat: decoded.latitudeCenter,
       lng: decoded.longitudeCenter,
     };
