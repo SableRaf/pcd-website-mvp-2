@@ -285,6 +285,11 @@ body {
   --color-callout-unconfirmed-text: #8ab4f8;
 }
 
+/* ─── Leaflet Container Dark Mode ───────────────────────────── */
+[data-theme="dark"] .leaflet-container {
+  background-color: var(--color-bg);
+}
+
 /* ─── Leaflet Popup Dark Mode ───────────────────────────────── */
 [data-theme="dark"] {
   .leaflet-popup-content-wrapper,
