@@ -140,7 +140,7 @@ body:
       placeholder: |-
         Jane Doe
         Alex Smith
-  - type: textarea
+  - type: input
     id: short_description
     attributes:
       label: Short description
