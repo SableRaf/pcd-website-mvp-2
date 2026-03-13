@@ -1,5 +1,5 @@
-name: New Event (advanced)
-description: Submit a new Processing Community Day event to the map. Use this template if you want to provide detailed information about your event, including a full description, dates, times, and other optional fields.
+name: New Event
+description: Submit a new Processing Community Day event to the map.
 title: "[New Event]: "
 labels:
   - New Event
@@ -9,7 +9,14 @@ body:
     attributes:
       value: |
         <!-- new-event-template -->
-        Fill out every required field as completely as possible. Dates must use `YYYY-MM-DD`, times must use 24-hour `HH:MM`, links must include `https://`, and the plus code must be a full global code from `https://plus.codes`.
+        Please fill out all required fields as completely as possible. Dates should use `YYYY-MM-DD`, times should use 24-hour `HH:MM`, and links should include `https://`.
+
+        The information you provide will be used to create an event entry on the PCD map. Submissions are reviewed by the PCD team before they are published. If something is unclear, we may contact you for a quick clarification.
+
+        Everything submitted here will be publicly visible online. Please avoid including any private or sensitive information in the form.
+
+        If you have questions about the submission process, please ask in the [PCD 2026 forum thread](https://discourse.processing.org/t/pcd-worldwide-2026/48081).
+        For private questions, feel free to contact the PCD team at [day@processingfoundation.org](mailto:day@processingfoundation.org).
   - type: input
     id: event_name
     attributes:
