@@ -106,14 +106,14 @@ body:
   - type: input
     id: event_date
     attributes:
-      label: Event date
+      label: Date of the event
       description: You can leave this blank if the date is not yet determined.
       placeholder: "2026-10-17"
   - type: input
     id: event_end_date
     attributes:
-      label: End date
-      description: Only required for multi-day events. Leave blank for single-day events.
+      label: End date (for multi-day events)
+      description: Leave blank for single-day events.
       placeholder: "2026-10-18"
   - type: input
     id: event_start_time
