@@ -100,7 +100,7 @@ body:
   - type: input
     id: address
     attributes:
-      label: Street address
+      label: Street address of the event venue
       description: You can leave this blank if the venue is still to be determined. 
       placeholder: Jonasstraße 22, 12053 Berlin
   - type: input
