@@ -16,6 +16,7 @@
 - [ ] Add a "Submitted date" field to the event details, showing when the event was first submitted. This can be automatically added in the workflow when a new PR is created for the event.
 - [ ] Move the light/dark mode toggle to an easily accessible place in the UI, such as the top right corner of the map, instead of being hidden in the side panel.
 - [ ] Add an optional total event count to the map view, showing the total number of events currently on the map. This can be added as a large badge in the top left corner of the map, with a tooltip that says "Total number of PCD events worldwide: XXX". Only show this badge if there are more than 10 events on the map.
+- [ ] Generate og tags and og images for the event details pages, to make them look nice when shared on social media. The og image can be generated using a template with the event name, date and location overlaid on a background image of the map or something similar.
 
 ## Later improvements (not for MVP):
 - [ ] Add submission form with confirmation email when the event is approved and published.
