@@ -145,7 +145,7 @@ body:
     attributes:
       label: Short description
       description: One short summary sentence for the map popup and preview UI.
-      placeholder: A short description of the event for the map popup and preview cards. For example; "An evening of live coding performances and workshops for creative coders of all levels."
+      placeholder: A short description of the event for the map popup and preview cards.
   - type: textarea
     id: full_description
     attributes:
