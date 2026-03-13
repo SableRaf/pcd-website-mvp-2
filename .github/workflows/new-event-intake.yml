@@ -2,7 +2,7 @@ name: New Event Intake
 
 on:
   issues:
-    types: [opened, edited, reopened]
+    types: [opened, edited, reopened, labeled]
 
 concurrency:
   group: new-event-intake-${{ github.event.issue.number }}
@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   create-event-pr:
-    if: contains(github.event.issue.body, '<!-- new-event-template -->')
+    if: contains(github.event.issue.labels.*.name, 'new event')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
