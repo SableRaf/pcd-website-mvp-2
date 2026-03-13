@@ -10,9 +10,6 @@ body:
       value: |
         <!-- new-event-template -->
         Everything submitted here will be publicly visible online. Please avoid including any private or sensitive information in the form.
-
-        If you have questions about the submission process, please ask in the [PCD 2026 forum thread](https://discourse.processing.org/t/pcd-worldwide-2026/48081).
-        For private questions, feel free to contact the PCD team at [day@processingfoundation.org](mailto:day@processingfoundation.org).
   - type: input
     id: event_name
     attributes:
@@ -208,3 +205,7 @@ body:
     attributes:
       value: |
         Thank you for submitting your event! The PCD team will review the information provided and may reach out if we have any questions.
+
+        If you have questions about the submission process, please ask in the [PCD 2026 forum thread](https://discourse.processing.org/t/pcd-worldwide-2026/48081).
+
+        For private questions, feel free to contact the PCD team at [day@processingfoundation.org](mailto:day@processingfoundation.org).
