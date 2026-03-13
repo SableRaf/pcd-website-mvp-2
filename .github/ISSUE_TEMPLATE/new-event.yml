@@ -19,105 +19,6 @@ body:
     validations:
       required: true
   - type: input
-    id: city
-    attributes:
-      label: City
-      description: Optional — helps identify the event in the list. Will be inferred if left blank.
-      placeholder: Berlin
-    validations:
-      required: false
-  - type: input
-    id: country
-    attributes:
-      label: Country
-      description: Optional — helps identify the event in the list. Will be inferred if left blank.
-      placeholder: Germany
-    validations:
-      required: false
-  - type: input
-    id: organization_name
-    attributes:
-      label: Organization name
-      description: The organization or group responsible for organizing the event. Can be left blank if there is no specific organizing entity.
-      placeholder: Something Group, University of Somewhere, etc.
-    validations:
-      required: false
-  - type: input
-    id: organization_url
-    attributes:
-      label: Organization website
-      description: Optional — link to the organizing group's website.
-      placeholder: https://example.org
-    validations:
-      required: false
-  - type: dropdown
-    id: organization_type
-    attributes:
-      label: Organization type
-      description: Select the category that best describes the organizing group.
-      options:
-        - School, university, library
-        - Fablab, makerspace, hackerspace
-        - Museum, gallery, media arts center
-        - Meetup, code club, community group
-        - Nonprofit, foundation, association
-        - Studio, tech company, startup
-        - Other
-    validations:
-      required: true
-  - type: input
-    id: address
-    attributes:
-      label: Street address
-      description: Leave blank if the venue is still to be determined. Used for map placement, so include street number when available.
-      placeholder: Jonasstraße 22, 12053 Berlin
-  - type: input
-    id: plus_code
-    attributes:
-      label: Full global plus code in the format XXXXXXXX+XX
-      description: Required for map placement. Do not use a shortened local code. Find or verify the plus code for your event location at https://plus.codes.
-      placeholder: 9F4MFCCM+JF
-    validations:
-      required: true
-  - type: input
-    id: event_date
-    attributes:
-      label: Event date
-      placeholder: "2026-10-17"
-    validations:
-      required: true
-  - type: input
-    id: event_end_date
-    attributes:
-      label: End date
-      description: Only required for multi-day events. Leave blank for single-day events.
-      placeholder: "2026-10-18"
-    validations:
-      required: false
-  - type: input
-    id: event_start_time
-    attributes:
-      label: Start time
-      description: 24-hour time. Leave blank if the start time is not yet determined.
-      placeholder: "19:00"
-    validations:
-      required: false
-  - type: input
-    id: event_end_time
-    attributes:
-      label: End time
-      description: 24-hour time. Leave blank if the end time is not yet determined.
-      placeholder: "21:30"
-    validations:
-      required: false
-  - type: input
-    id: event_website
-    attributes:
-      label: Event website
-      placeholder: https://example.org/pcd
-    validations:
-      required: true
-  - type: input
     id: primary_contact_name
     attributes:
       label: Primary contact name
@@ -133,24 +34,97 @@ body:
       placeholder: hello@example.org
     validations:
       required: true
+  - type: input
+    id: city
+    attributes:
+      label: City or locality
+      placeholder: Berlin
+  - type: input
+    id: country
+    attributes:
+      label: Country
+      placeholder: Germany
+  - type: input
+    id: organization_name
+    attributes:
+      label: Organization name
+      description: The organization or group responsible for organizing the event. Can be left blank if there is no specific organizing entity.
+      placeholder: Something Group, University of Somewhere, etc.
+  - type: input
+    id: organization_url
+    attributes:
+      label: Organization website
+      placeholder: https://example.org
+  - type: dropdown
+    id: organization_type
+    attributes:
+      label: Organization type
+      description: Select the category that best describes the organizing group.
+      options:
+        - School, university, library
+        - Fablab, makerspace, hackerspace
+        - Museum, gallery, media arts center
+        - Meetup, code club, community group
+        - Nonprofit, foundation, association
+        - Studio, tech company, startup
+        - Other
+  - type: input
+    id: address
+    attributes:
+      label: Street address
+      description: You can leave this blank if the venue is still to be determined. 
+      placeholder: Jonasstraße 22, 12053 Berlin
+  - type: input
+    id: plus_code
+    attributes:
+      label: Full global plus code in the format XXXXXXXX+XX
+      description: Required for map placement. Find or verify the plus code for your event location at https://plus.codes.
+      placeholder: 9F4MFCCM+JF
+    validations:
+      required: true
+  - type: input
+    id: event_date
+    attributes:
+      label: Event date
+      description: You can leave this blank if the date is not yet determined.
+      placeholder: "2026-10-17"
+  - type: input
+    id: event_end_date
+    attributes:
+      label: End date
+      description: Only required for multi-day events. Leave blank for single-day events.
+      placeholder: "2026-10-18"
+  - type: input
+    id: event_start_time
+    attributes:
+      label: Start time
+      description: 24-hour time. Leave blank if the start time is not yet determined.
+      placeholder: "19:00"
+  - type: input
+    id: event_end_time
+    attributes:
+      label: End time
+      description: 24-hour time. Leave blank if the end time is not yet determined.
+      placeholder: "21:30"
+  - type: input
+    id: event_website
+    attributes:
+      label: Event website
+      placeholder: https://example.org/pcd
   - type: textarea
     id: organizers
     attributes:
       label: Organizers
-      description: One name per line.
+      description: One name per line. You can leave this blank if there are no specific organizers to highlight or if you prefer not to list individual names.
       placeholder: |-
         Jane Doe
         Alex Smith
-    validations:
-      required: true
   - type: textarea
     id: short_description
     attributes:
       label: Short description
       description: One short summary sentence for the map popup and preview UI.
       placeholder: A local celebration of Processing, creative coding, and community practice in Berlin.
-    validations:
-      required: true
   - type: textarea
     id: full_description
     attributes:
@@ -158,8 +132,6 @@ body:
       description: This becomes the markdown body for the event details page.
       placeholder: |-
         Tell visitors what the event is about, who it is for, and what to expect.
-    validations:
-      required: true
   - type: checkboxes
     id: event_activities
     attributes:
@@ -177,30 +149,31 @@ body:
         - label: Screening
         - label: Other
   - type: input
-    id: event_url
-    attributes:
-      label: Online event URL
-      description: Required for online events. Leave blank for in-person events.
-      placeholder: https://zoom.us/j/example
-  - type: input
     id: forum_thread_url
     attributes:
       label: Forum discussion URL
       description: Optional Processing forum thread with updates.
       placeholder: https://discourse.processing.org/t/pcd-worldwide-2026/48081
-  - type: input
-    id: submitted_by
+  - type: dropdown
+    id: format
     attributes:
-      label: Your GitHub profile URL
-      description: GitHub profile of the person responsible for updating this event entry after publication.
-      placeholder: https://github.com/jane-doe
+      label: Event format
+      options:
+        - In person
+        - Online
     validations:
       required: true
+  - type: input
+    id: online_event_url
+    attributes:
+      label: Online event URL
+      description: For online events, provide the URL where the event will take place (e.g. Zoom link, YouTube live stream, etc.).
+      placeholder: https://zoom.us/j/123456789
   - type: textarea
     id: maintainer_notes
     attributes:
       label: Additional notes
-      description: Optional context that should not appear publicly on the map.
+      description: Optional context for the maintainers reviewing this submission. This field will not be published on the site.
   - type: markdown
     attributes:
       value: |
