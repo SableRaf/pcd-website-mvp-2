@@ -136,11 +136,11 @@ function buildPrBody(number, name) {
   ].join('\n');
 }
 
+console.log(`[process-new-event-issue] issue #${issueNumber}, body length: ${issueBody.length}`);
+
 if (!issueBody.includes('<!-- new-event-template -->')) {
-  await setOutput('valid', 'false');
-  const noopCommentPath = path.join(RUNNER_TEMP, `new-event-${issueNumber}-noop.md`);
-  await fs.writeFile(noopCommentPath, 'Issue does not use the New Event template.');
-  await setOutput('validation_comment_path', noopCommentPath);
+  console.log('[process-new-event-issue] template marker not found — skipping (not a new event issue)');
+  await setOutput('valid', 'skip');
   process.exit(0);
 }
 
@@ -224,6 +224,8 @@ try {
 }
 
 if (errors.length > 0) {
+  console.log(`[process-new-event-issue] validation failed with ${errors.length} error(s):`);
+  errors.forEach((e) => console.log(`  - ${e}`));
   const validationCommentPath = path.join(RUNNER_TEMP, `new-event-${issueNumber}-validation.md`);
   await fs.writeFile(validationCommentPath, buildValidationComment(errors));
   await setOutput('valid', 'false');
@@ -277,6 +279,7 @@ await fs.writeFile(metadataPath, `${JSON.stringify(nodeRecord, null, 2)}\n`);
 const prBodyPath = path.join(RUNNER_TEMP, `new-event-${issueNumber}-pr-body.md`);
 await fs.writeFile(prBodyPath, buildPrBody(issueNumber, eventName));
 
+console.log(`[process-new-event-issue] validation passed — event id: ${eventId}`);
 await setOutput('valid', 'true');
 await setOutput('branch', `automation/new-event-${issueNumber}-${eventId}`);
 await setOutput('commit_message', `Add ${eventName} event from issue #${issueNumber}`);

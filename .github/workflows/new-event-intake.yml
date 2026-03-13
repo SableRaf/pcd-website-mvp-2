@@ -74,8 +74,15 @@ jobs:
       - name: Generate event files from issue
         id: generate
         run: node .github/scripts/process-new-event-issue.mjs
+      - name: Log generate outputs
+        if: always()
+        run: |
+          echo "valid=${{ steps.generate.outputs.valid }}"
+          echo "branch=${{ steps.generate.outputs.branch }}"
+          echo "validation_comment_path=${{ steps.generate.outputs.validation_comment_path }}"
+          echo "pr_body_path=${{ steps.generate.outputs.pr_body_path }}"
       - name: Upsert validation status comment
-        if: steps.generate.outputs.valid != 'true'
+        if: steps.generate.outputs.valid == 'false'
         uses: actions/github-script@v8
         env:
           VALIDATION_COMMENT_PATH: ${{ steps.generate.outputs.validation_comment_path }}
