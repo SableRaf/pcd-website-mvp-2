@@ -23,22 +23,22 @@ if (!node) {
 const { Content } = await entry.render();
 const eventDate = node.date_tbd
   ? 'Date TBD'
-  : formatDateRange(node.start_date ?? '', node.end_date);
-const eventTime = !node.date_tbd && node.start_time
-  ? formatTimeRange(node.start_time, node.end_time, node.timezone)
+  : formatDateRange(node.event_date ?? '', node.event_end_date);
+const eventTime = !node.date_tbd && node.event_start_time
+  ? formatTimeRange(node.event_start_time, node.event_end_time)
   : node.time_tbd
     ? 'Time TBD'
     : '';
-const locationLabel = node.online
-  ? onlinePlatformName(node.online_url)
+const locationLabel = node.online_event
+  ? onlinePlatformName(node.event_url)
   : node.location_tbd
     ? 'Location TBD'
-    : node.venue;
-const locationDetail = node.online
-  ? node.online_url
+    : node.address;
+const locationDetail = node.online_event
+  ? node.event_url
   : node.location_tbd
     ? ''
-    : node.address || `${node.city}, ${node.country}`;
+    : node.address;
 ---
 
 <!DOCTYPE html>
@@ -46,8 +46,8 @@ const locationDetail = node.online
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{node.name} | Processing Community Day 2026</title>
-    <meta name="description" content={node.short_description || `${node.name} event details`} />
+    <title>{node.event_name} | Processing Community Day 2026</title>
+    <meta name="description" content={node.event_short_description || `${node.event_name} event details`} />
     <link rel="icon" type="image/x-icon" href={`${import.meta.env.BASE_URL}/favicon.ico`} />
   </head>
   <body class="event-page-body">
@@ -56,9 +56,9 @@ const locationDetail = node.online
       <article class="event-page-card">
         <header class="event-page-header">
           <p class="event-page-kicker">Processing Community Day 2026</p>
-          <h1>{node.name}</h1>
-          {node.organizing_entity && <p class="event-page-entity">by {node.organizing_entity}</p>}
-          {node.short_description && <p class="event-page-summary">{node.short_description}</p>}
+          <h1>{node.event_name}</h1>
+          {node.organization_name && <p class="event-page-entity">by {node.organization_name}</p>}
+          {node.event_short_description && <p class="event-page-summary">{node.event_short_description}</p>}
         </header>
 
         <section class="event-page-meta" aria-label="Event details">
@@ -74,9 +74,9 @@ const locationDetail = node.online
           </div>
           <div>
             <span class="event-page-meta-label">Contact</span>
-            <a href={`mailto:${node.contact_email}`}>{node.contact_email}</a>
-            {node.website && (
-              <a href={node.website} target="_blank" rel="noopener noreferrer">
+            <a href={`mailto:${node.primary_contact.email}`}>{node.primary_contact.email}</a>
+            {node.event_website && (
+              <a href={node.event_website} target="_blank" rel="noopener noreferrer">
                 Visit event website
               </a>
             )}

@@ -23,7 +23,7 @@ const containerRef = ref<HTMLElement | null>(null);
 let trap: FocusTrap | null = null;
 
 const sortedNodes = computed(() =>
-  [...props.nodes].sort((a, b) => a.name.localeCompare(b.name))
+  [...props.nodes].sort((a, b) => a.event_name.localeCompare(b.event_name))
 );
 
 onMounted(() => {
@@ -124,9 +124,9 @@ function handleKeydown(e: KeyboardEvent) {
           class="node-item"
           @click="emit('select', node)"
         >
-          <span class="node-name">{{ node.name }}</span>
+          <span class="node-name">{{ node.event_name }}</span>
           <span class="node-location">{{ node.city }}, {{ node.country }}</span>
-          <span class="node-date">{{ formatDateRange(node.start_date, node.end_date) }}</span>
+          <span class="node-date">{{ node.event_date ? formatDateRange(node.event_date, node.event_end_date) : 'Date TBD' }}</span>
         </button>
       </li>
     </ul>

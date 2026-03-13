@@ -111,7 +111,7 @@ watch(
     hostsExpanded.value = false;
     if (newNode) {
       trap?.activate();
-      if (!newNode.online && !newNode.location_tbd) initMinimap(newNode);
+      if (!newNode.online_event && !newNode.location_tbd) initMinimap(newNode);
       else destroyMinimap();
     } else {
       trap?.deactivate();
@@ -135,9 +135,9 @@ function downloadIcs(node: Node) {
 }
 
 function getOsmUrl(node: Node): string {
-  const query = node.address
-    ? `${node.venue}, ${node.address}`
-    : `${node.venue}, ${node.city}, ${node.country}`;
+  const query = node.location_name
+    ? [node.location_name, node.address].filter(Boolean).join(', ')
+    : node.address ?? '';
   return `https://www.openstreetmap.org/search?query=${encodeURIComponent(query)}`;
 }
 
@@ -145,18 +145,18 @@ function getParagraphs(text: string): string[] {
   return text.split(/\n\n+/).filter(Boolean);
 }
 
-function formatOrganizers(organizers: { name: string; email: string }[], expanded = false): string {
+function formatOrganizers(organizers: { name: string }[], expanded = false): string {
   const names = organizers.map(o => o.name).filter(Boolean);
   if (expanded || names.length <= HOSTS_VISIBLE) return names.join(', ');
   return names.slice(0, HOSTS_VISIBLE).join(', ');
 }
 
-function hasMoreHosts(organizers: { name: string; email: string }[]): boolean {
+function hasMoreHosts(organizers: { name: string }[]): boolean {
   return organizers.map(o => o.name).filter(Boolean).length > HOSTS_VISIBLE;
 }
 
 function getDescPreview(node: Node): { text: string; hasMore: boolean } {
-  const full = node.details_text || node.short_description || '';
+  const full = node.details_text || node.event_short_description || '';
   const paras = getParagraphs(full);
   const first = paras[0] ?? '';
   const truncated = first.length > PANEL_TRUNCATE_LENGTH
@@ -168,7 +168,7 @@ function getDescPreview(node: Node): { text: string; hasMore: boolean } {
 async function share(node: Node) {
   const url = `${window.location.href.split('#')[0]}#${node.id}`;
   if (navigator.share) {
-    try { await navigator.share({ title: node.name, url }); } catch { /* user cancelled */ }
+    try { await navigator.share({ title: node.event_name, url }); } catch { /* user cancelled */ }
   } else {
     try { await navigator.clipboard.writeText(url); } catch { /* clipboard unavailable */ }
   }
@@ -206,12 +206,12 @@ async function share(node: Node) {
         <div v-if="node.placeholder" class="panel-placeholder">
           ⚠ This is placeholder data. No real event has been confirmed at this location.
         </div>
-        <div v-else-if="!node.confirmed" class="panel-unconfirmed">
-          ℹ This event has not been confirmed yet.<span v-if="node.forum_url"> <a :href="node.forum_url" target="_blank" rel="noopener noreferrer">Follow the forum thread</a> for updates.</span>
+        <div v-else-if="node.draft" class="panel-unconfirmed">
+          ℹ This event has not been confirmed yet.<span v-if="node.forum_thread_url"> <a :href="node.forum_thread_url" target="_blank" rel="noopener noreferrer">Follow the forum thread</a> for updates.</span>
         </div>
 
         <div class="panel-header-row">
-          <h2 id="panel-title" class="panel-name">{{ node.name }}</h2>
+          <h2 id="panel-title" class="panel-name">{{ node.event_name }}</h2>
           <button
             class="quick-action-btn"
             aria-label="Share event"
@@ -222,8 +222,8 @@ async function share(node: Node) {
           </button>
         </div>
         <div class="panel-byline">
-          <p v-if="node.organizing_entity" class="panel-organizing-entity">
-            <span class="panel-label">by</span> {{ node.organizing_entity }}
+          <p v-if="node.organization_name" class="panel-organizing-entity">
+            <span class="panel-label">by</span> {{ node.organization_name }}
           </p>
           <p v-if="node.organizers.some(o => o.name)" class="panel-hosts">
             <span class="panel-label">Hosts:</span>
@@ -241,11 +241,12 @@ async function share(node: Node) {
             <Icon icon="bi:calendar-event" width="18" height="18" aria-hidden="true" class="info-card-icon" />
             <div>
               <span v-if="node.date_tbd" class="info-card-date info-card-tbd">Date TBD</span>
-              <span v-else class="info-card-date">{{ formatDateRange(node.start_date ?? '', node.end_date) }}</span>
+              <span v-else class="info-card-date">{{ formatDateRange(node.event_date ?? '', node.event_end_date) }}</span>
               <span v-if="!node.date_tbd && node.time_tbd" class="info-card-time info-card-tbd">· Time TBD</span>
-              <span v-else-if="!node.date_tbd && node.start_time" class="info-card-time">
-                · {{ formatTimeRange(node.start_time, node.end_time, node.timezone) }}
+              <span v-else-if="!node.date_tbd && node.event_start_time" class="info-card-time">
+                · {{ formatTimeRange(node.event_start_time, node.event_end_time) }}
               </span>
+              <span v-if="!node.date_tbd && node.event_start_time" class="info-card-time-note">Local time</span>
             </div>
           </div>
           <hr class="info-card-divider" aria-hidden="true" />
@@ -255,26 +256,26 @@ async function share(node: Node) {
             <div class="info-card-row-leading">
               <Icon icon="bi:link-45deg" width="18" height="18" aria-hidden="true" class="info-card-icon" />
               <div class="info-card-venue">
-                <span class="info-card-venue-name">{{ node.online ? onlinePlatformName(node.online_url) : node.location_tbd ? 'Location TBD' : node.venue }}</span>
+                <span class="info-card-venue-name">{{ node.online_event ? onlinePlatformName(node.event_url) : node.location_tbd ? 'Location TBD' : (node.location_name || node.address) }}</span>
                 <a
-                  v-if="node.online && node.online_url"
-                  :href="node.online_url"
+                  v-if="node.online_event && node.event_url"
+                  :href="node.event_url"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="info-card-venue-address"
                   title="Join the online event"
-                >{{ node.online_url }}</a>
+                >{{ node.event_url }}</a>
                 <a
-                  v-else-if="!node.online && !node.location_tbd"
+                  v-else-if="!node.online_event && !node.location_tbd && node.address"
                   :href="getOsmUrl(node)"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="info-card-venue-address"
                   title="Get directions on OpenStreetMap"
-                >{{ node.address || `${node.city}, ${node.country}` }}</a>
+                >{{ node.location_name ? node.address : 'View on OpenStreetMap' }}</a>
               </div>
             </div>
-            <p v-if="node.online" class="panel-online-badge info-card-online-badge">
+            <p v-if="node.online_event" class="panel-online-badge info-card-online-badge">
               <Icon icon="bi:wifi" width="13" height="13" aria-hidden="true" />
               Online Event
             </p>
@@ -309,7 +310,7 @@ async function share(node: Node) {
         </div>
 
         <!-- Minimap (hidden for online events and TBD locations) -->
-        <div v-if="!node.online && !node.location_tbd" class="panel-minimap-wrap" aria-hidden="true">
+        <div v-if="!node.online_event && !node.location_tbd" class="panel-minimap-wrap" aria-hidden="true">
           <div ref="minimapRef" class="panel-minimap"></div>
           <div class="panel-minimap-shield"></div>
         </div>
@@ -318,7 +319,7 @@ async function share(node: Node) {
         <div class="panel-description">
           <template v-if="descExpanded">
             <p
-              v-for="(para, i) in getParagraphs(node.details_text || node.short_description)"
+              v-for="(para, i) in getParagraphs(node.details_text || node.event_short_description)"
               :key="i"
             >{{ para }}</p>
           </template>
@@ -335,10 +336,10 @@ async function share(node: Node) {
         </div>
 
         <!-- Links section -->
-        <div v-if="node.website || node.contact_email" class="panel-links">
+        <div v-if="node.event_website || node.primary_contact.email" class="panel-links">
           <hr class="panel-separator" aria-hidden="true" />
           <a
-            v-if="!node.online && !node.location_tbd"
+            v-if="!node.online_event && !node.location_tbd"
             :href="getOsmUrl(node)"
             target="_blank"
             rel="noopener noreferrer"
@@ -349,8 +350,8 @@ async function share(node: Node) {
             <span>Get directions</span>
           </a>
           <a
-            v-if="node.online && node.online_url"
-            :href="node.online_url"
+            v-if="node.online_event && node.event_url"
+            :href="node.event_url"
             target="_blank"
             rel="noopener noreferrer"
             class="panel-link-row"
@@ -363,30 +364,30 @@ async function share(node: Node) {
             v-if="node.event_page_path"
             :href="node.event_page_path"
             class="panel-link-row"
-            :title="`Open the event page for ${node.name}`"
+            :title="`Open the event page for ${node.event_name}`"
           >
             <Icon icon="bi:file-earmark-text" width="16" height="16" aria-hidden="true" class="panel-link-icon" />
             <span>Open event page</span>
           </a>
           <a
-            v-if="node.contact_email"
-            :href="`mailto:${node.contact_email}`"
+            v-if="node.primary_contact.email"
+            :href="`mailto:${node.primary_contact.email}`"
             class="panel-link-row"
-            :title="`Email ${node.contact_email}`"
+            :title="`Email ${node.primary_contact.email}`"
           >
             <Icon icon="bi:envelope" width="16" height="16" aria-hidden="true" class="panel-link-icon" />
-            <span>{{ node.contact_email }}</span>
+            <span>{{ node.primary_contact.email }}</span>
           </a>
           <a
-            v-if="node.website"
-            :href="node.website"
+            v-if="node.event_website"
+            :href="node.event_website"
             target="_blank"
             rel="noopener noreferrer"
             class="panel-link-row"
-            :title="`Visit ${node.website}`"
+            :title="`Visit ${node.event_website}`"
           >
             <Icon icon="bi:globe" width="16" height="16" aria-hidden="true" class="panel-link-icon" />
-            <span>{{ node.website }}</span>
+            <span>{{ node.event_website }}</span>
           </a>
         </div>
       </div>
@@ -708,6 +709,13 @@ async function share(node: Node) {
 .info-card-time {
   font-size: 0.875rem;
   color: var(--color-text-muted);
+}
+
+.info-card-time-note {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  opacity: 0.7;
+  margin-left: 0.25em;
 }
 
 .info-card-divider {

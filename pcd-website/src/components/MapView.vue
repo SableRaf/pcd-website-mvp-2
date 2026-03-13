@@ -235,7 +235,7 @@ onMounted(async () => {
 
   // Add markers
   props.nodes.forEach((node) => {
-    const icon = node.online ? onlineMarkerIcon : markerIcon;
+    const icon = node.online_event ? onlineMarkerIcon : markerIcon;
     const marker = L.marker([node.lat, node.lng], { icon });
     marker.bindPopup(() => makePopupContent(node), { maxWidth: 340 });
     markerMap.set(node.id, marker);

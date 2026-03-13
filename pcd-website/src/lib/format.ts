@@ -67,21 +67,19 @@ function escapeIcs(str: string): string {
 }
 
 export function calendarLinks(node: Node): { googleCalUrl: string; icsContent: string } {
-  const startDate = toICalDate(node.start_date ?? '');
-  const endDate = node.end_date ? toICalDate(node.end_date) : nextDay(node.start_date ?? '');
+  const startDate = toICalDate(node.event_date ?? '');
+  const endDate = node.event_end_date ? toICalDate(node.event_end_date) : nextDay(node.event_date ?? '');
   const location = node.location_tbd
     ? 'Location TBD'
-    : node.address
-      ? `${node.venue}, ${node.address}`
-      : `${node.venue}, ${node.city}, ${node.country}`;
+    : node.address ?? 'Location TBD';
 
   // Google Calendar URL
   const params = new URLSearchParams({
     action: 'TEMPLATE',
-    text: node.name,
+    text: node.event_name,
     dates: `${startDate}/${endDate}`,
     location,
-    details: node.details_text || node.short_description,
+    details: node.details_text || node.event_short_description,
   });
   const googleCalUrl = `https://calendar.google.com/calendar/render?${params.toString()}`;
 
@@ -91,22 +89,22 @@ export function calendarLinks(node: Node): { googleCalUrl: string; icsContent: s
   const icsLocation = node.location_tbd
     ? 'Location TBD'
     : node.address
-      ? `${node.venue}\\, ${node.address}`
-      : `${node.venue}\\, ${node.city}\\, ${node.country}`;
+      ? node.address.replace(/,/g, '\\,')
+      : 'Location TBD';
 
   const icsContent = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
     'PRODID:-//PCD2026//EN',
     'BEGIN:VEVENT',
-    `UID:${node.id}-${node.start_date}@pcd2026`,
+    `UID:${node.id}-${node.event_date}@pcd2026`,
     `DTSTAMP:${dtstamp}`,
     `DTSTART;VALUE=DATE:${startDate}`,
     `DTEND;VALUE=DATE:${endDate}`,
-    `SUMMARY:${escapeIcs(node.name)}`,
+    `SUMMARY:${escapeIcs(node.event_name)}`,
     `LOCATION:${icsLocation}`,
-    `DESCRIPTION:${escapeIcs(node.details_text || node.short_description)}`,
-    `URL:${node.website}`,
+    `DESCRIPTION:${escapeIcs(node.details_text || node.event_short_description)}`,
+    `URL:${node.event_website}`,
     'END:VEVENT',
     'END:VCALENDAR',
   ].join('\r\n');
@@ -176,16 +174,15 @@ export function formatTime(timeString: string): FormattedTime {
   return { display: `${base} ${period}`, base, period };
 }
 
-export function formatTimeRange(startTime?: string, endTime?: string, tz?: string): string {
+export function formatTimeRange(startTime?: string, endTime?: string): string {
   if (!startTime) return '';
   const start = formatTime(startTime);
-  const tzSuffix = tz ? ` ${tz}` : '';
   if (endTime) {
     const end = formatTime(endTime);
     if (start.period && end.period && start.period === end.period) {
-      return `${start.base}-${end.base} ${start.period}${tzSuffix}`;
+      return `${start.base}-${end.base} ${start.period}`;
     }
-    return `${start.display} to ${end.display}${tzSuffix}`;
+    return `${start.display} to ${end.display}`;
   }
-  return `${start.display}${tzSuffix}`;
+  return `${start.display}`;
 }

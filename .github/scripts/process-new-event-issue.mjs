@@ -67,6 +67,10 @@ function isValidPlusCode(value) {
   return /^[23456789CFGHJMPQRVWX]{8}\+[23456789CFGHJMPQRVWX]{2,3}$/.test(normalized);
 }
 
+function isValidGitHubProfileUrl(value) {
+  return /^https:\/\/github\.com\/[a-zA-Z0-9_-]+\/?$/.test(value.trim());
+}
+
 function slugify(value) {
   return value
     .normalize('NFKD')
@@ -77,11 +81,18 @@ function slugify(value) {
     .replace(/-{2,}/g, '-');
 }
 
-function parseTags(raw) {
+function parseActivities(raw) {
+  const VALID_ACTIVITIES = new Set([
+    'Show-and-tell', 'Hands-on workshops', 'Live coding', 'Exhibition',
+    'Panel discussions', 'Beginner introductions to Processing or p5.js',
+    'Creative coding jams or hack sessions', 'Student project presentations',
+    'Screening', 'Other',
+  ]);
   return raw
-    .split(',')
-    .map((tag) => tag.trim())
-    .filter(Boolean);
+    .split('\n')
+    .filter(line => /^\s*-\s*\[x\]/i.test(line))
+    .map(line => line.replace(/^\s*-\s*\[x\]\s*/i, '').trim())
+    .filter(label => VALID_ACTIVITIES.has(label));
 }
 
 function parseOrganizers(raw, errors) {
@@ -96,13 +107,10 @@ function parseOrganizers(raw, errors) {
   }
 
   return lines.map((line) => {
-    const match = line.match(/^(.*?)\s*<([^>]+)>$/);
-    if (!match) return { name: line, email: '' };
-    const [, name, email] = match;
-    if (email && !isValidEmail(email.trim())) {
-      errors.push(`Organizer email "${email.trim()}" is not valid.`);
-    }
-    return { name: name.trim(), email: email.trim() };
+    // Strip optional "<email>" suffix if someone provides it, but don't require it
+    const match = line.match(/^(.*?)\s*<[^>]+>$/);
+    const name = (match ? match[1] : line).trim();
+    return { name };
   }).filter((organizer) => organizer.name);
 }
 
@@ -117,10 +125,7 @@ function toYamlList(values, indent = 0) {
 
 function toYamlOrganizerList(values, indent = 0) {
   const prefix = ' '.repeat(indent);
-  return values.map((value) => [
-    `${prefix}- name: ${toYamlScalar(value.name)}`,
-    `${prefix}  email: ${toYamlScalar(value.email)}`,
-  ].join('\n')).join('\n');
+  return values.map((value) => `${prefix}- name: ${toYamlScalar(value.name)}`).join('\n');
 }
 
 function buildValidationComment(errors) {
@@ -140,11 +145,11 @@ function buildPrBody(number, name) {
     `This PR was generated from the "New Event" issue form for **${name}**.`,
     '',
     'Review checklist:',
-    '- [ ] Dates, times, and timezone are correct',
-    '- [ ] Venue, address, plus code, or online URL are correct',
-    '- [ ] Public contact info and maintainer contact info are correct',
+    '- [ ] Dates and times are correct',
+    '- [ ] Address, plus code, or online URL are correct',
+    '- [ ] Public contact info is correct',
     '- [ ] Short description and full event description are ready to publish',
-    '- [ ] The event should be listed on the map in its current confirmed state',
+    '- [ ] The event should be listed on the map in its current draft state',
   ].join('\n');
 }
 
@@ -160,51 +165,58 @@ const fields = parseIssueSections(issueBody);
 const errors = [];
 
 const eventName = required(fields, 'Event name', errors);
-const city = required(fields, 'City', errors);
-const country = required(fields, 'Country', errors);
-const region = required(fields, 'Region', errors);
-const eventFormat = required(fields, 'Event format', errors);
-const venue = required(fields, 'Venue or platform name', errors);
+const city = fields.get('City')?.trim() ?? '';
+const country = fields.get('Country')?.trim() ?? '';
+const organizationName = fields.get('Organization name')?.trim() ?? '';
+const organizationUrl = fields.get('Organization website')?.trim() ?? '';
+const organizationType = required(fields, 'Organization type', errors);
 const address = fields.get('Street address')?.trim() ?? '';
-const plusCode = required(fields, 'Full global plus code', errors).replace(/\s+/g, '').toUpperCase();
-const startDate = required(fields, 'Start date', errors);
-const endDate = required(fields, 'End date', errors);
-const startTime = required(fields, 'Start time', errors);
-const endTime = required(fields, 'End time', errors);
-const timezone = required(fields, 'Timezone abbreviation', errors);
-const website = required(fields, 'Event website', errors);
+const plusCode = required(fields, 'Full global plus code in the format XXXXXXXX+XX', errors).replace(/\s+/g, '').toUpperCase();
+const eventDate = required(fields, 'Event date', errors);
+const eventEndDate = fields.get('End date')?.trim() ?? '';
+const startTime = fields.get('Start time')?.trim() ?? '';
+const endTime = fields.get('End time')?.trim() ?? '';
+const eventWebsite = fields.get('Event website')?.trim() ?? '';
+const primaryContactName = required(fields, 'Primary contact name', errors);
 const contactEmail = required(fields, 'Primary contact email', errors);
-const organizingEntity = required(fields, 'Organizing entity', errors);
 const organizers = parseOrganizers(required(fields, 'Organizers', errors), errors);
 const shortDescription = required(fields, 'Short description', errors);
 const fullDescription = required(fields, 'Full event description', errors);
-const onlineUrl = fields.get('Online event URL')?.trim() ?? '';
-const forumUrl = fields.get('Forum discussion URL')?.trim() ?? '';
-const tags = parseTags(fields.get('Tags')?.trim() ?? '');
-const confirmed = required(fields, 'Is this event already confirmed?', errors);
-const maintainerName = required(fields, 'Maintainer name', errors);
-const maintainerEmail = required(fields, 'Maintainer email', errors);
-const maintainerNotes = fields.get('Additional notes for maintainers')?.trim() ?? '';
+const activities = parseActivities(fields.get('Event activities')?.trim() ?? '');
+const eventUrl = fields.get('Online event URL')?.trim() ?? '';
+const forumThreadUrl = fields.get('Forum discussion URL')?.trim() ?? '';
+const draftValue = required(fields, 'Is this event still being planned (draft)?', errors);
+const submittedBy = fields.get('Your GitHub profile URL')?.trim() ?? '';
+const maintainerNotes = fields.get('Additional notes')?.trim() ?? '';
 
-if (startDate && !isValidDate(startDate)) errors.push(`Start date must use YYYY-MM-DD and be a real date. Received "${startDate}".`);
-if (endDate && !isValidDate(endDate)) errors.push(`End date must use YYYY-MM-DD and be a real date. Received "${endDate}".`);
-if (isValidDate(startDate) && isValidDate(endDate) && endDate < startDate) errors.push('End date cannot be earlier than start date.');
+const VALID_ORG_TYPES = new Set([
+  'School, university, library',
+  'Fablab, makerspace, hackerspace',
+  'Museum, gallery, media arts center',
+  'Meetup, code club, community group',
+  'Nonprofit, foundation, association',
+  'Studio, tech company, startup',
+  'Other',
+]);
+
+if (eventDate && !isValidDate(eventDate)) errors.push(`Event date must use YYYY-MM-DD and be a real date. Received "${eventDate}".`);
+if (eventEndDate && !isValidDate(eventEndDate)) errors.push(`End date must use YYYY-MM-DD and be a real date. Received "${eventEndDate}".`);
+if (isValidDate(eventDate) && eventEndDate && isValidDate(eventEndDate) && eventEndDate < eventDate) errors.push('End date cannot be earlier than event date.');
 if (startTime && !isValidTime(startTime)) errors.push(`Start time must use 24-hour HH:MM. Received "${startTime}".`);
 if (endTime && !isValidTime(endTime)) errors.push(`End time must use 24-hour HH:MM. Received "${endTime}".`);
 if (startTime && endTime && isValidTime(startTime) && isValidTime(endTime) && endTime <= startTime) errors.push('End time must be later than start time.');
-if (website && !isValidHttpUrl(website)) errors.push(`Event website must be a valid http or https URL. Received "${website}".`);
-if (forumUrl && !isValidHttpUrl(forumUrl)) errors.push(`Forum discussion URL must be a valid http or https URL. Received "${forumUrl}".`);
+if (eventWebsite && !isValidHttpUrl(eventWebsite)) errors.push(`Event website must be a valid http or https URL. Received "${eventWebsite}".`);
+if (forumThreadUrl && !isValidHttpUrl(forumThreadUrl)) errors.push(`Forum discussion URL must be a valid http or https URL. Received "${forumThreadUrl}".`);
 if (contactEmail && !isValidEmail(contactEmail)) errors.push(`Primary contact email is not valid. Received "${contactEmail}".`);
-if (maintainerEmail && !isValidEmail(maintainerEmail)) errors.push(`Maintainer email is not valid. Received "${maintainerEmail}".`);
 if (plusCode && !isValidPlusCode(plusCode)) errors.push(`Full global plus code is not valid. Received "${plusCode}".`);
-if (eventFormat === 'Online' && !onlineUrl) errors.push('Online event URL is required for online events.');
-if (onlineUrl && !isValidHttpUrl(onlineUrl)) errors.push(`Online event URL must be a valid http or https URL. Received "${onlineUrl}".`);
-if (!['Yes', 'No'].includes(confirmed)) errors.push('Is this event already confirmed? must be Yes or No.');
-if (!['In person', 'Online'].includes(eventFormat)) errors.push('Event format must be In person or Online.');
+if (eventUrl && !isValidHttpUrl(eventUrl)) errors.push(`Online event URL must be a valid http or https URL. Received "${eventUrl}".`);
+if (organizationType && !VALID_ORG_TYPES.has(organizationType)) errors.push(`Organization type "${organizationType}" is not one of the valid options.`);
+if (submittedBy && !isValidGitHubProfileUrl(submittedBy)) errors.push(`Your GitHub profile URL must start with https://github.com/. Received "${submittedBy}".`);
+if (!draftValue.startsWith('Yes') && !draftValue.startsWith('No')) errors.push('Draft status field must be answered.');
 
-const idSource = eventFormat === 'Online' && region === 'Global'
-  ? `${eventName}-${YEAR}`
-  : `${city || eventName}-${YEAR}`;
+const isDraft = draftValue.startsWith('Yes');
+
+const idSource = `${eventName}-${YEAR}`;
 const eventId = slugify(idSource.startsWith('pcd-') ? idSource : `pcd-${idSource}`);
 
 const nodesJsonPath = path.join(WORKSPACE, 'pcd-website/src/data/nodes.json');
@@ -225,70 +237,69 @@ if (errors.length > 0) {
 
 const nodeRecord = {
   id: eventId,
-  name: eventName,
+  organizers,
+  primary_contact: { name: primaryContactName, email: contactEmail },
+  organization_name: organizationName,
+  organization_url: organizationUrl,
+  organization_type: organizationType,
+  online_event: !!eventUrl,
+  event_url: eventUrl,
+  event_name: eventName,
+  event_location: {
+    address,
+    plus_code: plusCode,
+  },
+  event_date: eventDate,
+  ...(eventEndDate ? { event_end_date: eventEndDate } : {}),
+  event_start_time: startTime,
+  event_end_time: endTime,
+  event_short_description: shortDescription,
+  event_long_description: fullDescription,
+  event_activities: activities,
+  event_website: eventWebsite,
+  forum_thread_url: forumThreadUrl,
   city,
   country,
-  region,
-  venue,
-  address,
-  start_date: startDate,
-  end_date: endDate,
-  start_time: startTime,
-  end_time: endTime,
-  timezone,
-  ...(eventFormat === 'Online' ? { online: true, online_url: onlineUrl } : {}),
-  plus_code: plusCode,
-  website,
-  short_description: shortDescription,
-  tags,
-  organizers,
-  organizing_entity: organizingEntity,
-  contact_email: contactEmail,
-  forum_url: forumUrl,
-  confirmed: confirmed === 'Yes',
+  draft: isDraft,
   placeholder: false,
-  maintainer: {
-    name: maintainerName,
-    email: maintainerEmail,
-  },
 };
 
 nodesData.nodes.push(nodeRecord);
 nodesData.nodes.sort((a, b) => {
-  const byDate = (a.start_date ?? '').localeCompare(b.start_date ?? '');
+  const byDate = (a.event_date ?? '').localeCompare(b.event_date ?? '');
   if (byDate !== 0) return byDate;
-  return a.name.localeCompare(b.name);
+  return a.event_name.localeCompare(b.event_name);
 });
 
 const markdownLines = [
   '---',
   `id: ${eventId}`,
   `title: ${toYamlScalar(eventName)}`,
+  `organization_name: ${toYamlScalar(organizationName)}`,
+  `organization_url: ${toYamlScalar(organizationUrl)}`,
+  `organization_type: ${toYamlScalar(organizationType)}`,
+  `online_event: ${!!eventUrl}`,
+  `event_url: ${toYamlScalar(eventUrl)}`,
+  `event_date: ${toYamlScalar(eventDate)}`,
+  ...(eventEndDate ? [`event_end_date: ${toYamlScalar(eventEndDate)}`] : []),
+  `event_start_time: ${toYamlScalar(startTime)}`,
+  `event_end_time: ${toYamlScalar(endTime)}`,
+  'event_location:',
+  `  address: ${toYamlScalar(address)}`,
+  `  plus_code: ${toYamlScalar(plusCode)}`,
+  `event_website: ${toYamlScalar(eventWebsite)}`,
+  `event_short_description: ${toYamlScalar(shortDescription)}`,
+  ...(activities.length ? ['event_activities:', toYamlList(activities, 2)] : ['event_activities: []']),
+  `forum_thread_url: ${toYamlScalar(forumThreadUrl)}`,
   `city: ${toYamlScalar(city)}`,
   `country: ${toYamlScalar(country)}`,
-  `region: ${toYamlScalar(region)}`,
-  `venue: ${toYamlScalar(venue)}`,
-  `address: ${toYamlScalar(address)}`,
-  `start_date: ${toYamlScalar(startDate)}`,
-  `end_date: ${toYamlScalar(endDate)}`,
-  `start_time: ${toYamlScalar(startTime)}`,
-  `end_time: ${toYamlScalar(endTime)}`,
-  `timezone: ${toYamlScalar(timezone)}`,
-  `plus_code: ${toYamlScalar(plusCode)}`,
-  `website: ${toYamlScalar(website)}`,
-  `short_description: ${toYamlScalar(shortDescription)}`,
-  `organizing_entity: ${toYamlScalar(organizingEntity)}`,
+  `draft: ${isDraft}`,
+  'primary_contact:',
+  `  name: ${toYamlScalar(primaryContactName)}`,
+  `  email: ${toYamlScalar(contactEmail)}`,
   'organizers:',
   toYamlOrganizerList(organizers, 2),
-  `contact_email: ${toYamlScalar(contactEmail)}`,
-  `forum_url: ${toYamlScalar(forumUrl)}`,
-  `confirmed: ${confirmed === 'Yes'}`,
-  `online: ${eventFormat === 'Online'}`,
-  `online_url: ${toYamlScalar(onlineUrl)}`,
-  ...(tags.length ? ['tags:', toYamlList(tags, 2)] : ['tags: []']),
-  'maintainer:',
-  `  name: ${toYamlScalar(maintainerName)}`,
-  `  email: ${toYamlScalar(maintainerEmail)}`,
+  `submitted_by: ${toYamlScalar(submittedBy)}`,
   `issue_number: ${issueNumber}`,
   `maintainer_notes: ${toYamlScalar(maintainerNotes)}`,
   '---',

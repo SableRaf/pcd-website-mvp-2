@@ -1,5 +1,5 @@
-name: New Event
-description: Submit a new Processing Community Day event for the map.
+name: New Event (advanced)
+description: Submit a new Processing Community Day event to the map. Use this template if you want to provide detailed information about your event, including a full description, dates, times, and other optional fields.
 title: "[New Event]: "
 labels:
   - New Event
@@ -22,53 +22,54 @@ body:
     id: city
     attributes:
       label: City
+      description: Optional — helps identify the event in the list. Will be inferred if left blank.
       placeholder: Berlin
     validations:
-      required: true
+      required: false
   - type: input
     id: country
     attributes:
       label: Country
+      description: Optional — helps identify the event in the list. Will be inferred if left blank.
       placeholder: Germany
     validations:
-      required: true
-  - type: dropdown
-    id: region
-    attributes:
-      label: Region
-      options:
-        - Africa
-        - Asia
-        - Europe
-        - North America
-        - Oceania
-        - South America
-        - Global
-    validations:
-      required: true
-  - type: dropdown
-    id: event_format
-    attributes:
-      label: Event format
-      description: Hybrid events should choose the primary format and describe the hybrid setup in the full event description.
-      options:
-        - In person
-        - Online
-    validations:
-      required: true
+      required: false
   - type: input
-    id: venue
+    id: organization_name
     attributes:
-      label: Venue or platform name
-      description: Physical venue for in-person events, or platform / host name for online events.
-      placeholder: Example Venue, Zoom, etc.
+      label: Organization name
+      description: The organization or group responsible for organizing the event. Can be left blank if there is no specific organizing entity.
+      placeholder: Something Group, University of Somewhere, etc.
+    validations:
+      required: false
+  - type: input
+    id: organization_url
+    attributes:
+      label: Organization website
+      description: Optional — link to the organizing group's website.
+      placeholder: https://example.org
+    validations:
+      required: false
+  - type: dropdown
+    id: organization_type
+    attributes:
+      label: Organization type
+      description: Select the category that best describes the organizing group.
+      options:
+        - School, university, library
+        - Fablab, makerspace, hackerspace
+        - Museum, gallery, media arts center
+        - Meetup, code club, community group
+        - Nonprofit, foundation, association
+        - Studio, tech company, startup
+        - Other
     validations:
       required: true
   - type: input
     id: address
     attributes:
       label: Street address
-      description: Leave blank only for online events or if the venue is still to be determined. This is used for geocoding the map location, so it should be as specific as possible (including street number when available).
+      description: Leave blank if the venue is still to be determined. Used for map placement, so include street number when available.
       placeholder: Jonasstraße 22, 12053 Berlin
   - type: input
     id: plus_code
@@ -79,47 +80,49 @@ body:
     validations:
       required: true
   - type: input
-    id: start_date
+    id: event_date
     attributes:
-      label: Start date
+      label: Event date
       placeholder: "2026-10-17"
     validations:
       required: true
   - type: input
-    id: end_date
+    id: event_end_date
     attributes:
       label: End date
-      placeholder: "2026-10-17"
+      description: Only required for multi-day events. Leave blank for single-day events.
+      placeholder: "2026-10-18"
     validations:
-      required: true
+      required: false
   - type: input
-    id: start_time
+    id: event_start_time
     attributes:
       label: Start time
-      description: 24-hour time.
+      description: 24-hour time. Leave blank if the event is an all-day event or if the start time is not yet determined.
       placeholder: "19:00"
     validations:
-      required: true
+      required: false
   - type: input
-    id: end_time
+    id: event_end_time
     attributes:
       label: End time
-      description: 24-hour time.
+      description: 24-hour time. Leave blank if the event is an all-day event or if the end time is not yet determined.
       placeholder: "21:30"
     validations:
-      required: true
+      required: false
   - type: input
-    id: timezone
-    attributes:
-      label: Timezone abbreviation
-      placeholder: CET
-    validations:
-      required: true
-  - type: input
-    id: website
+    id: event_website
     attributes:
       label: Event website
       placeholder: https://example.org/pcd
+    validations:
+      required: true
+  - type: input
+    id: primary_contact_name
+    attributes:
+      label: Primary contact name
+      description: Name of the person who can be contacted about this event.
+      placeholder: Jane Doe
     validations:
       required: true
   - type: input
@@ -130,21 +133,14 @@ body:
       placeholder: hello@example.org
     validations:
       required: true
-  - type: input
-    id: organizing_entity
-    attributes:
-      label: Organizing entity
-      placeholder: Creative Code Berlin
-    validations:
-      required: true
   - type: textarea
     id: organizers
     attributes:
       label: Organizers
-      description: One organizer per line. Use `Name <email@example.org>` when possible.
+      description: One name per line.
       placeholder: |-
-        Jane Doe <jane@example.org>
-        Alex Smith <alex@example.org>
+        Jane Doe
+        Alex Smith
     validations:
       required: true
   - type: textarea
@@ -164,51 +160,53 @@ body:
         Tell visitors what the event is about, who it is for, and what to expect.
     validations:
       required: true
+  - type: checkboxes
+    id: event_activities
+    attributes:
+      label: Event activities
+      description: Select all activities that apply.
+      options:
+        - label: Show-and-tell
+        - label: Hands-on workshops
+        - label: Live coding
+        - label: Exhibition
+        - label: Panel discussions
+        - label: Beginner introductions to Processing or p5.js
+        - label: Creative coding jams or hack sessions
+        - label: Student project presentations
+        - label: Screening
+        - label: Other
   - type: input
-    id: online_url
+    id: event_url
     attributes:
       label: Online event URL
       description: Required for online events. Leave blank for in-person events.
       placeholder: https://zoom.us/j/example
   - type: input
-    id: forum_url
+    id: forum_thread_url
     attributes:
       label: Forum discussion URL
       description: Optional Processing forum thread with updates.
       placeholder: https://discourse.processing.org/t/pcd-worldwide-2026/48081
-  - type: input
-    id: tags
-    attributes:
-      label: Tags
-      description: Optional comma-separated tags such as workshops, talks, beginners, performance.
-      placeholder: workshops, talks, beginners
   - type: dropdown
-    id: confirmed
+    id: draft
     attributes:
-      label: Is this event already confirmed?
+      label: Is this event still being planned (draft)?
       options:
-        - "Yes"
-        - "No"
+        - "Yes (draft — details not finalized)"
+        - "No (confirmed and ready to publish)"
     validations:
       required: true
   - type: input
-    id: maintainer_name
+    id: submitted_by
     attributes:
-      label: Maintainer GitHub handle
-      description: GitHub handle of the person responsible for updating this event entry after publication.
-      placeholder: jane-doe
-    validations:
-      required: true
-  - type: input
-    id: maintainer_email
-    attributes:
-      label: Maintainer email
-      description: Best contact for follow-up about updates to this event entry.
-      placeholder: jane@example.org
+      label: Your GitHub profile URL
+      description: GitHub profile of the person responsible for updating this event entry after publication.
+      placeholder: https://github.com/jane-doe
     validations:
       required: true
   - type: textarea
     id: maintainer_notes
     attributes:
-      label: Additional notes for maintainers
+      label: Additional notes
       description: Optional context that should not appear publicly on the map.
