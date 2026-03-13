@@ -138,8 +138,10 @@ function buildPrBody(number, name) {
 
 console.log(`[process-new-event-issue] issue #${issueNumber}, body length: ${issueBody.length}`);
 
-if (!issueBody.includes('<!-- new-event-template -->')) {
-  console.log('[process-new-event-issue] template marker not found — skipping (not a new event issue)');
+// GitHub strips HTML comments from markdown blocks, so we detect the template
+// by checking for a heading that is unique to the new-event issue form.
+if (!issueBody.includes('### Map placement')) {
+  console.log('[process-new-event-issue] template headings not found — skipping (not a new event issue)');
   await setOutput('valid', 'skip');
   process.exit(0);
 }
