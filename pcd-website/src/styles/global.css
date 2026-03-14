@@ -333,7 +333,7 @@ body {
 }
 
 .leaflet-popup-content button.read-more:hover {
-  background: var(--color-primary-dark);
+  opacity: 0.85;
 }
 
 .popup-content .popup-link-row {
@@ -397,6 +397,31 @@ body {
   color: var(--color-online-badge-text);
   background: var(--color-online-badge-bg);
   border-color: var(--color-online-badge-border);
+}
+
+/* ─── Node List Hover Dark Mode ────────────────────────────── */
+[data-theme="dark"] .node-item:hover {
+  background: #2e2e2e !important;
+}
+
+[data-theme="dark"] .style-btn:hover {
+  background: #2e2e2e !important;
+}
+
+[data-theme="dark"] .style-btn--active:hover {
+  background: #7a20d8 !important;
+}
+
+/* ─── Node Panel Hover Dark Mode ───────────────────────────── */
+[data-theme="dark"] .quick-action-menu a:hover,
+[data-theme="dark"] .quick-action-menu button:hover {
+  background: #4a4a4a;
+}
+
+[data-theme="dark"] .quick-action-btn:hover {
+  background: var(--color-link);
+  border-color: var(--color-link);
+  color: #1a1a1a;
 }
 
 /* ─── Leaflet Container Dark Mode ───────────────────────────── */

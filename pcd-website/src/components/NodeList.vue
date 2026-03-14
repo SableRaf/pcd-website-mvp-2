@@ -125,7 +125,7 @@ function handleKeydown(e: KeyboardEvent) {
           @click="emit('select', node)"
         >
           <span class="node-name">{{ node.event_name }}</span>
-          <span class="node-location">{{ node.city }}, {{ node.country }}</span>
+          <span class="node-location">{{ node.online_event ? 'Online event' : `${node.city}, ${node.country}` }}</span>
           <span class="node-date">{{ node.event_date ? formatDateRange(node.event_date, node.event_end_date) : 'Date TBD' }}</span>
         </button>
       </li>
