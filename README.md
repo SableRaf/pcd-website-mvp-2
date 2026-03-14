@@ -1,10 +1,12 @@
-# PCD 2026 Website
 
-A global map of Processing Community Day events for 2026.
+> [!NOTE] 
+> This project is in early development. The map and event data are not yet complete, but we welcome contributions from the community!
 
-In 2026, Processing turns 25. To mark the occasion, Processing Community Day (PCD) returns as a worldwide celebration.
+# Processing Community Day Website
 
-PCD is a global network of community-led events that brings together artists, designers, technologists, educators, and open-source communities around the world.
+A global map of Processing Community Day events.
+
+In 2026, Processing turns 25. To mark the occasion, Processing Community Day (PCD) returns as a worldwide celebration! PCD is a global network of community-led events that brings together artists, designers, technologists, educators, and open-source communities around the world.
 
 For more information about PCD 2026 and how to get involved, see the [forum thread](https://discourse.processing.org/t/pcd-worldwide-2026-call-for-organizers/48081).
 
@@ -38,3 +40,7 @@ npm run dev      # localhost:4321
 npm run build    # production build → dist/
 npm run preview  # preview production build
 ```
+
+## Looking for the old PCD website? 
+
+See [processing/processing-community-day-website-archived](https://github.com/processing/processing-community-day-website-archived) or the [Wayback Machine archive](https://web.archive.org/web/20221201000000*/https://day.processing.org/).
