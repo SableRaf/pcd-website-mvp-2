@@ -178,6 +178,12 @@ async function copyLink(node: Node) {
   shareDropdownOpen.value = false;
   setTimeout(() => { linkCopied.value = false; }, 2000);
 }
+
+function getReportIssueHref(node: Node): string {
+  const subject = `[Report] Issue with "${node.event_name}" page`;
+  const body = `Hi PCD team,\n\nI would like to report an issue with the following page:\n\n- Name: "${node.event_name}"\n- Link: ${getShareUrl(node)}\n\n[Please describe the issue here].\n\nThank you!`;
+  return `mailto:day@processingfoundation.org?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
 </script>
 
 <template>
@@ -397,7 +403,7 @@ async function copyLink(node: Node) {
             <Icon icon="bi:map" width="1em" height="1em" aria-hidden="true" class="panel-link-icon" />
             <span>Get directions</span>
           </a>
-<a
+          <a
             v-if="node.primary_contact.email"
             :href="`mailto:${node.primary_contact.email}`"
             class="panel-link-row"
@@ -416,6 +422,30 @@ async function copyLink(node: Node) {
           >
             <Icon icon="bi:globe" width="1em" height="1em" aria-hidden="true" class="panel-link-icon" />
             <span>{{ node.event_page_url }}</span>
+          </a>
+        </div>
+
+        <!-- Disclaimer -->
+        <template v-if="!node.organization_name?.toLowerCase().includes('processing foundation')">
+          <hr class="panel-separator" aria-hidden="true" />
+          <p v-if="node.organization_name" class="panel-disclaimer">
+            This event is organized by {{ node.organization_name }} and is not affiliated with the Processing Foundation. For any questions or concerns about this event, please contact the organizers directly.
+          </p>
+          <p v-else class="panel-disclaimer">
+            This event is independently organized and is not affiliated with the Processing Foundation. For any questions or concerns about this event, please contact the organizers directly.
+          </p>
+        </template>
+
+        <!-- Report issue -->
+        <div class="panel-report">
+          <hr class="panel-separator" aria-hidden="true" />
+          <a
+            :href="getReportIssueHref(node)"
+            class="panel-link-row panel-report-link"
+            title="Report an issue with this page"
+          >
+            <Icon icon="bi:flag" width="1em" height="1em" aria-hidden="true" class="panel-link-icon" />
+            <span>Report an issue with this page</span>
           </a>
         </div>
       </div>
@@ -690,7 +720,7 @@ async function copyLink(node: Node) {
 .panel-event-website-btn {
   display: block;
   width: 100%;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   padding: 0.625rem 1rem;
   background: var(--color-link);
   color: #fff;
@@ -933,8 +963,23 @@ async function copyLink(node: Node) {
 }
 
 /* ─── Links section ─── */
+.panel-disclaimer {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
 .panel-links {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.panel-report-link {
+  color: var(--color-text-muted);
+}
+
+.panel-report-link:hover {
+  color: var(--color-link);
 }
 
 .panel-separator {
