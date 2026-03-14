@@ -143,9 +143,12 @@ function handleKeydown(e: KeyboardEvent) {
       marker?.getElement()?.focus();
     } else {
       const mapEl = document.getElementById('map');
-      if (mapEl && (mapEl === document.activeElement || mapEl.contains(document.activeElement))) {
+      if (mapEl && mapEl.contains(document.activeElement) && document.activeElement !== mapEl) {
         e.preventDefault();
         mapEl.focus();
+      } else if (mapEl && document.activeElement === mapEl) {
+        e.preventDefault();
+        document.getElementById('burger-btn')?.focus();
       }
     }
   } else if (!isTextInput && /^[0-9]$/.test(e.key)) {
