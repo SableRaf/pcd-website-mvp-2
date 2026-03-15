@@ -10,7 +10,7 @@
       @click.stop="open = !open"
     >
       <Icon icon="bi:globe" width="1em" height="1em" aria-hidden="true" />
-      <span class="lang-current">{{ currentLocale.toUpperCase() }}</span>
+      <span class="lang-current">{{ LANGUAGE_NAMES[currentLocale] }}</span>
       <Icon icon="bi:chevron-down" class="lang-chevron" :class="{ 'lang-chevron--open': open }" width="0.75em" height="0.75em" aria-hidden="true" />
     </button>
     <ul
