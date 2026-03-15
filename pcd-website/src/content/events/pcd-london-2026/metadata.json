@@ -24,7 +24,7 @@
   "event_start_time": "19:00",
   "event_end_time": "21:30",
   "event_short_description": "",
-  "event_activities": [],
+  "event_activities": ["talk", "workshop", "showcase"],
   "event_page_url": "https://example.co.uk/pcd",
   "forum_thread_url": "",
   "city": "London",

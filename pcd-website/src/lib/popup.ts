@@ -82,6 +82,10 @@ export function makePopupContent(node: Node): string {
         >${escapeHtml(node.address)}</a>`
       : '';
 
+  const activitiesHtml = node.event_activities?.length
+    ? `${descriptionHtml ? '<hr class="popup-divider" aria-hidden="true">' : ''}<div class="popup-activities">${node.event_activities.map(a => `<span class="popup-activity-tag">${escapeHtml(a)}</span>`).join('')}</div>`
+    : '';
+
   return `
     <div class="popup-content">
       ${placeholderBanner}
@@ -99,6 +103,7 @@ export function makePopupContent(node: Node): string {
       </div>
       <div class="popup-body">
         ${descriptionHtml}
+        ${activitiesHtml}
         <button class="read-more" data-node-id="${escapeHtml(node.id)}" aria-label="${escapeHtml(t('popup.see_details'))} ${escapeHtml(node.event_name)}">${t('popup.see_details')} &rarr;</button>
       </div>
     </div>

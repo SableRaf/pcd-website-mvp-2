@@ -347,44 +347,58 @@ function getReportIssueHref(node: Node): string {
               {{ t('panel.online_event') }}
             </p>
           </div>
-          <hr class="info-card-divider" aria-hidden="true" />
-
           <!-- Row 3: Add to calendar (hidden when date is TBD) -->
-          <div v-if="!node.date_tbd" class="info-card-row info-card-calendar-row">
-            <Icon icon="bi:calendar-plus" width="1em" height="1em" aria-hidden="true" class="info-card-icon" />
-            <div class="info-card-cal-trigger-wrap">
-              <button
-                class="info-card-cal-trigger"
-                :aria-label="t('panel.add_to_calendar')"
-                aria-haspopup="menu"
-                :aria-expanded="calDropdownOpen"
-                @click.stop="calDropdownOpen = !calDropdownOpen"
-              >
-                {{ t('panel.add_to_calendar') }}
-              </button>
-              <div v-show="calDropdownOpen" class="quick-action-menu" role="menu">
-                <a
-                  :href="calendarLinks(node).googleCalUrl"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  role="menuitem"
-                  :aria-label="t('panel.google_calendar_new_tab')"
-                  @click="calDropdownOpen = false"
-                >{{ t('panel.google_calendar') }}</a>
-                <a
-                  :href="calendarLinks(node).outlookCalUrl"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  role="menuitem"
-                  :aria-label="t('panel.outlook_new_tab')"
-                  @click="calDropdownOpen = false"
-                >{{ t('panel.outlook') }}</a>
-                <button role="menuitem" @click="downloadIcs(node); calDropdownOpen = false">
-                  {{ t('panel.download_ics') }}
+          <template v-if="!node.date_tbd">
+            <hr class="info-card-divider" aria-hidden="true" />
+            <div class="info-card-row info-card-calendar-row">
+              <Icon icon="bi:calendar-plus" width="1em" height="1em" aria-hidden="true" class="info-card-icon" />
+              <div class="info-card-cal-trigger-wrap">
+                <button
+                  class="info-card-cal-trigger"
+                  :aria-label="t('panel.add_to_calendar')"
+                  aria-haspopup="menu"
+                  :aria-expanded="calDropdownOpen"
+                  @click.stop="calDropdownOpen = !calDropdownOpen"
+                >
+                  {{ t('panel.add_to_calendar') }}
                 </button>
+                <div v-show="calDropdownOpen" class="quick-action-menu" role="menu">
+                  <a
+                    :href="calendarLinks(node).googleCalUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    role="menuitem"
+                    :aria-label="t('panel.google_calendar_new_tab')"
+                    @click="calDropdownOpen = false"
+                  >{{ t('panel.google_calendar') }}</a>
+                  <a
+                    :href="calendarLinks(node).outlookCalUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    role="menuitem"
+                    :aria-label="t('panel.outlook_new_tab')"
+                    @click="calDropdownOpen = false"
+                  >{{ t('panel.outlook') }}</a>
+                  <button role="menuitem" @click="downloadIcs(node); calDropdownOpen = false">
+                    {{ t('panel.download_ics') }}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          </template>
+          <template v-if="node.event_activities?.length">
+            <hr class="info-card-divider" aria-hidden="true" />
+            <div class="info-card-row panel-activities">
+              <Icon icon="bi:tag" width="1em" height="1em" aria-hidden="true" class="info-card-icon" />
+              <div class="panel-activity-tags">
+                <span
+                  v-for="activity in node.event_activities"
+                  :key="activity"
+                  class="panel-activity-tag"
+                >{{ activity }}</span>
+              </div>
+            </div>
+          </template>
         </div>
 
         <!-- Minimap (hidden for online events and TBD locations) -->
@@ -682,6 +696,29 @@ function getReportIssueHref(node: Node): string {
   color: var(--color-text-muted);
 }
 
+.panel-activity-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4em;
+}
+
+.panel-activity-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.2em 0.55em;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-panel);
+  color: var(--color-text);
+  text-transform: capitalize;
+}
+
+[data-theme="dark"] .panel-activity-tag {
+  border-color: var(--color-border-light);
+}
+
 .panel-organizing-entity {
   margin: 0 0 0.125rem;
   font-size: 0.875rem;
@@ -952,6 +989,10 @@ function getReportIssueHref(node: Node): string {
   text-decoration: none;
   font-family: var(--font-family);
   transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+[data-theme="dark"] .quick-action-btn {
+  border-color: var(--color-border-light);
 }
 
 .quick-action-btn:hover {

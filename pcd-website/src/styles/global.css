@@ -282,6 +282,32 @@ html.theme-transition *::after {
   align-self: flex-start;
 }
 
+.popup-content .popup-divider {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 0.5rem 0;
+}
+
+.popup-content .popup-activities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3em;
+  margin-bottom: 0.5rem;
+}
+
+.popup-content .popup-activity-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.6rem;
+  font-weight: 500;
+  padding: 0.15em 0.45em;
+  border-radius: 3px;
+  border: 1px solid var(--color-border);
+  background: var(--color-panel-bg);
+  color: var(--color-text);
+  text-transform: capitalize;
+}
+
 .popup-content .popup-placeholder {
   background: var(--color-callout-placeholder-bg);
   border: 1px solid var(--color-callout-placeholder-border);
@@ -408,6 +434,7 @@ html.theme-transition *::after {
   --color-bg-popup: #303030;
   --color-bg-popup-hover: #3a3a3a;
   --color-border: #3a3a3a;
+  --color-border-light: #555;
   --color-overlay: rgba(0, 0, 0, 0.6);
   --color-callout-placeholder-bg: #2d2510;
   --color-callout-placeholder-border: #7a5f18;
@@ -431,6 +458,11 @@ html.theme-transition *::after {
   color: var(--color-online-badge-text);
   background: var(--color-online-badge-bg);
   border-color: var(--color-online-badge-border);
+}
+
+/* ─── Activity Tag Dark Mode ────────────────────────────────── */
+[data-theme="dark"] .popup-content .popup-activity-tag {
+  border-color: var(--color-border-light);
 }
 
 /* ─── Node List Hover Dark Mode ────────────────────────────── */

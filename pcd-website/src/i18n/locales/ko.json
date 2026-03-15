@@ -61,6 +61,7 @@
     "show_less": "접기",
     "disclaimer_with_org": "이 이벤트는 {org}이(가) 주최하며 Processing Foundation과 관련이 없습니다. 이 이벤트에 관한 질문이나 우려 사항은 주최자에게 직접 문의하세요.",
     "disclaimer_without_org": "이 이벤트는 독립적으로 주최되며 Processing Foundation과 관련이 없습니다. 이 이벤트에 관한 질문이나 우려 사항은 주최자에게 직접 문의하세요.",
+    "activities_label": "활동",
     "report_issue": "이 페이지의 문제 신고",
     "email_subject": "[신고] \"{name}\" 페이지 문제",
     "email_body": "PCD 팀 안녕하세요,\n\n다음 페이지의 문제를 신고하고 싶습니다:\n\n- 이름: \"{name}\"\n- 링크: {link}\n\n[여기에 문제를 설명해 주세요].\n\n감사합니다!"
