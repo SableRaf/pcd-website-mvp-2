@@ -30,7 +30,7 @@
   "forum_thread_url": "",
   "city": "Santa-Maria Navarese",
   "country": "Italy",
-  "placeholder": false,
+  "placeholder": true,
   "intake": {
     "issue_number": 2,
     "maintainer_notes": "Nothing of note"
