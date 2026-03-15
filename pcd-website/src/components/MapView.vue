@@ -23,6 +23,7 @@ let mapInstance: import('leaflet').Map | null = null;
 let leafletRef: typeof import('leaflet') | null = null;
 const markerMap = new Map<string, import('leaflet').Marker>();
 let openPopupNodeId: string | null = null;
+let slidingWindowHandler: ((e: FocusEvent) => void) | null = null;
 
 // --- Tile style config ---
 interface TileLayerConfig { url: string; options: Record<string, unknown>; }
@@ -62,6 +63,7 @@ const MAP_STYLES: MapStyle[] = [
 ];
 
 const STORAGE_KEY = 'pcd-map-style';
+const SLIDING_WINDOW_MARGIN = 0.28; // 28% dead zone inset from each edge
 let activeTileLayers: import('leaflet').TileLayer[] = [];
 let themeTransitionTimer: number | null = null;
 
@@ -135,6 +137,35 @@ function openList() {
 
 function closeList() {
   listOpen.value = false;
+}
+
+function panToKeepInView(lat: number, lng: number): void {
+  if (!mapInstance) return;
+  if (selectedNode.value !== null) return;
+  if (openPopupNodeId !== null) return;
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const containerPoint = mapInstance.latLngToContainerPoint([lat, lng]);
+  const size = mapInstance.getSize();
+
+  const mx = size.x * SLIDING_WINDOW_MARGIN;
+  const my = size.y * SLIDING_WINDOW_MARGIN;
+
+  let dx = 0;
+  let dy = 0;
+
+  if (containerPoint.x < mx)               dx = containerPoint.x - mx;
+  else if (containerPoint.x > size.x - mx) dx = containerPoint.x - (size.x - mx);
+
+  if (containerPoint.y < my)               dy = containerPoint.y - my;
+  else if (containerPoint.y > size.y - my) dy = containerPoint.y - (size.y - my);
+
+  if (dx !== 0 || dy !== 0) {
+    mapInstance.panBy([dx, dy], {
+      animate: !reduceMotion,
+      duration: reduceMotion ? 0 : 0.3,
+    });
+  }
 }
 
 function onNodeSelect(node: Node) {
@@ -385,6 +416,22 @@ onMounted(async () => {
     });
   });
 
+  // Sliding window: pan just enough to keep focused markers in the safe zone
+  slidingWindowHandler = (e: FocusEvent) => {
+    const target = e.target as HTMLElement;
+    if (!target.classList.contains('marker-node')) return;
+
+    let foundNode: Node | undefined;
+    markerMap.forEach((marker, id) => {
+      if (marker.getElement() === target) {
+        foundNode = props.nodes.find(n => n.id === id);
+      }
+    });
+
+    if (foundNode) panToKeepInView(foundNode.lat, foundNode.lng);
+  };
+  map.getContainer().addEventListener('focusin', slidingWindowHandler);
+
   // Move focus into popup content when it opens
   map.on('popupopen', (e) => {
     const container = e.popup.getElement();
@@ -442,6 +489,10 @@ onUnmounted(() => {
   }
   document.documentElement.classList.remove('theme-transition');
   document.removeEventListener('keydown', handleKeydown);
+  if (slidingWindowHandler && mapInstance) {
+    mapInstance.getContainer().removeEventListener('focusin', slidingWindowHandler);
+    slidingWindowHandler = null;
+  }
   mapInstance?.remove();
 });
 </script>
