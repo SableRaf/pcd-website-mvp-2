@@ -47,6 +47,10 @@ npm run build    # production build → dist/
 npm run preview  # preview production build
 ```
 
+## Known issues
+
+Fractional zoom levels cause gaps in the map tiles on Chromium. (this is a known issue with Leaflet, see: https://github.com/Leaflet/Leaflet/issues/3575)
+
 ## Looking for the old PCD website? 
 
 See [processing/processing-community-day-website-archived](https://github.com/processing/processing-community-day-website-archived) or the [Wayback Machine archive](https://web.archive.org/web/20221201000000*/https://day.processing.org/).
