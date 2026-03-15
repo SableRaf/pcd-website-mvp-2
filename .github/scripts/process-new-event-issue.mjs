@@ -6,6 +6,7 @@ const RUNNER_TEMP = process.env.RUNNER_TEMP ?? path.join(WORKSPACE, '.tmp');
 const OUTPUT_PATH = process.env.GITHUB_OUTPUT;
 const EVENT_PATH = process.env.GITHUB_EVENT_PATH;
 const YEAR = '2026';
+const PCD_FORUM_THREAD_URL = 'https://discourse.processing.org/t/pcd-worldwide-2026-call-for-organizers/48081';
 
 await fs.mkdir(RUNNER_TEMP, { recursive: true });
 
@@ -32,9 +33,9 @@ function parseIssueSections(body) {
   }));
 }
 
-function required(fields, label, errors) {
+function required(fields, label, errors, errorOverride) {
   const value = fields.get(label)?.trim() ?? '';
-  if (!value) errors.push(`${label} is required.`);
+  if (!value) errors.push(errorOverride ?? { field: label, message: 'This field is required.' });
   return value;
 }
 
@@ -113,13 +114,22 @@ function parseOrganizers(raw) {
   }).filter((organizer) => organizer.name);
 }
 
+function formatError({ field, found, message }) {
+  const foundPart = found !== undefined ? ` (found: \`${found}\`)` : '';
+  return `- **${field}**${foundPart} — ${message}`;
+}
+
 function buildValidationComment(errors) {
+  const count = errors.length;
+  const fieldWord = count === 1 ? 'field needs' : 'fields need';
   return [
-    'Thanks for submitting a new event. I could not generate the branch and pull request yet because a few fields need attention:',
+    'Thanks for submitting your event to Processing Community Day 2026! 🌍',
     '',
-    ...errors.map((error) => `- ${error}`),
+    `We couldn't create a pull request yet because **${count} ${fieldWord} attention**:`,
     '',
-    'Please edit the issue with the missing or corrected information. Opening a fresh submission is also fine if that is easier.',
+    ...errors.map(formatError),
+    '',
+    `Once you've edited the issue with the corrected information, this check will run again automatically. If you need help, post in the [PCD 2026 forum thread](${PCD_FORUM_THREAD_URL}).`,
   ].join('\n');
 }
 
@@ -151,8 +161,14 @@ const fields = parseIssueSections(issueBody);
 const errors = [];
 
 const eventName = required(fields, 'Event name', errors);
-const plusCode = required(fields, 'Map placement', errors).replace(/\s+/g, '').toUpperCase();
-const eventFormat = required(fields, 'Event format', errors);
+const plusCode = required(fields, 'Map placement', errors, {
+  field: 'Map placement (Plus Code)',
+  message: 'This field is required. A Plus Code looks like `8FW4V75V+8Q`. [Find your Plus Code →](https://plus.codes/)',
+}).replace(/\s+/g, '').toUpperCase();
+const eventFormat = required(fields, 'Event format', errors, {
+  field: 'Event format',
+  message: 'This field is required. Choose one of: `In person` or `Online`.',
+});
 const isOnlineEvent = eventFormat === 'Online';
 const eventUrl = fields.get('Event URL (only for online events)')?.trim() ?? '';
 const primaryContactName = required(fields, 'Primary contact name', errors);
@@ -185,11 +201,11 @@ const VALID_ORG_TYPES = new Set([
 ]);
 const VALID_EVENT_FORMATS = new Set(['In person', 'Online']);
 
-if (eventDate && !isValidDate(eventDate)) errors.push(`Event date must use YYYY-MM-DD and be a real date. Received "${eventDate}".`);
-if (eventEndDate && !isValidDate(eventEndDate)) errors.push(`End date must use YYYY-MM-DD and be a real date. Received "${eventEndDate}".`);
-if (isValidDate(eventDate) && eventEndDate && isValidDate(eventEndDate) && eventEndDate < eventDate) errors.push('End date cannot be earlier than event date.');
-if (startTime && !isValidTime(startTime)) errors.push(`Start time must use 24-hour HH:MM. Received "${startTime}".`);
-if (endTime && !isValidTime(endTime)) errors.push(`End time must use 24-hour HH:MM. Received "${endTime}".`);
+if (eventDate && !isValidDate(eventDate)) errors.push({ field: 'Event date', found: eventDate, message: 'Invalid format. Please use `YYYY-MM-DD`, e.g. `2026-03-21`.' });
+if (eventEndDate && !isValidDate(eventEndDate)) errors.push({ field: 'End date', found: eventEndDate, message: 'Invalid format. Please use `YYYY-MM-DD`, e.g. `2026-03-22`.' });
+if (isValidDate(eventDate) && eventEndDate && isValidDate(eventEndDate) && eventEndDate < eventDate) errors.push({ field: 'End date', found: eventEndDate, message: 'The end date must be on or after the event date.' });
+if (startTime && !isValidTime(startTime)) errors.push({ field: 'Start time', found: startTime, message: 'Invalid format. Please use 24-hour `HH:MM`, e.g. `14:00`.' });
+if (endTime && !isValidTime(endTime)) errors.push({ field: 'End time', found: endTime, message: 'Invalid format. Please use 24-hour `HH:MM`, e.g. `16:30`.' });
 if (
   startTime &&
   endTime &&
@@ -198,17 +214,17 @@ if (
   (!eventEndDate || eventEndDate === eventDate) &&
   endTime <= startTime
 ) {
-  errors.push('End time must be later than start time for single-day events.');
+  errors.push({ field: 'End time', found: endTime, message: 'End time must be later than start time for single-day events.' });
 }
-if (eventWebsite && !isValidHttpUrl(eventWebsite)) errors.push(`Event website must be a valid http or https URL. Received "${eventWebsite}".`);
-if (forumThreadUrl && !isValidHttpUrl(forumThreadUrl)) errors.push(`Forum discussion URL must be a valid http or https URL. Received "${forumThreadUrl}".`);
-if (contactEmail && !isValidEmail(contactEmail)) errors.push(`Primary contact email is not valid. Received "${contactEmail}".`);
-if (plusCode && !isValidPlusCode(plusCode)) errors.push(`Full global plus code is not valid. Received "${plusCode}".`);
-if (eventUrl && !isValidHttpUrl(eventUrl)) errors.push(`Online event URL must be a valid http or https URL. Received "${eventUrl}".`);
-if (organizationUrl && !isValidHttpUrl(organizationUrl)) errors.push(`Organization website must be a valid http or https URL. Received "${organizationUrl}".`);
-if (eventFormat && !VALID_EVENT_FORMATS.has(eventFormat)) errors.push(`Event format "${eventFormat}" is not one of the valid options.`);
-if (organizationType && !VALID_ORG_TYPES.has(organizationType)) errors.push(`Organization type "${organizationType}" is not one of the valid options.`);
-if (isOnlineEvent && !eventUrl) errors.push('Event URL is required for online events.');
+if (eventWebsite && !isValidHttpUrl(eventWebsite)) errors.push({ field: 'Event website', found: eventWebsite, message: 'Must be a valid URL starting with `http://` or `https://`, e.g. `https://example.com/pcd`.' });
+if (forumThreadUrl && !isValidHttpUrl(forumThreadUrl)) errors.push({ field: 'Forum discussion URL', found: forumThreadUrl, message: 'Must be a valid URL starting with `http://` or `https://`.' });
+if (contactEmail && !isValidEmail(contactEmail)) errors.push({ field: 'Primary contact email', found: contactEmail, message: 'Not a valid email address. Please provide a valid email like `you@example.com`.' });
+if (plusCode && !isValidPlusCode(plusCode)) errors.push({ field: 'Map placement (Plus Code)', found: plusCode, message: 'Not a valid full global Plus Code. It should look like `8FW4V75V+8Q`. [Find your Plus Code →](https://plus.codes/)' });
+if (eventUrl && !isValidHttpUrl(eventUrl)) errors.push({ field: 'Event URL', found: eventUrl, message: 'Must be a valid URL starting with `http://` or `https://`.' });
+if (organizationUrl && !isValidHttpUrl(organizationUrl)) errors.push({ field: 'Organization website', found: organizationUrl, message: 'Must be a valid URL starting with `http://` or `https://`.' });
+if (eventFormat && !VALID_EVENT_FORMATS.has(eventFormat)) errors.push({ field: 'Event format', found: eventFormat, message: 'Not a recognized option. Please choose one of: `In person` or `Online`.' });
+if (organizationType && !VALID_ORG_TYPES.has(organizationType)) errors.push({ field: 'Organization type', found: organizationType, message: 'Not a recognized option. Please choose one of the valid options from the form.' });
+if (isOnlineEvent && !eventUrl) errors.push({ field: 'Event URL', message: 'An event URL is required for online events. Please provide the URL where people can join.' });
 
 const normalizedEventName = slugify(eventName);
 const eventId = normalizedEventName.startsWith('pcd-')
@@ -221,14 +237,14 @@ const metadataPath = path.join(eventDirPath, 'metadata.json');
 
 try {
   await fs.access(eventDirPath);
-  errors.push(`An event with the generated id "${eventId}" already exists. Update the existing event instead of creating a duplicate.`);
+  errors.push({ field: 'Event name', found: eventName, message: `An event with the generated ID \`${eventId}\` already exists. If you need to update an existing event, post in the [PCD 2026 forum thread](${PCD_FORUM_THREAD_URL}) or contact ${PCD_EMAIL}.` });
 } catch {
   // Directory does not exist yet.
 }
 
 if (errors.length > 0) {
   console.log(`[process-new-event-issue] validation failed with ${errors.length} error(s):`);
-  errors.forEach((e) => console.log(`  - ${e}`));
+  errors.forEach((e) => console.log(`  - [${e.field}]${e.found !== undefined ? ` (found: "${e.found}")` : ''} ${e.message}`));
   const validationCommentPath = path.join(RUNNER_TEMP, `new-event-${issueNumber}-validation.md`);
   await fs.writeFile(validationCommentPath, buildValidationComment(errors));
   await setOutput('valid', 'false');
