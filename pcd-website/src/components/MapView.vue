@@ -250,7 +250,7 @@ onMounted(async () => {
     for (let code = 48; code <= 57; code++) delete kb._zoomKeys[code];
   }
 
-  L.control.zoom({ position: 'bottomleft' }).addTo(map);
+  L.control.zoom({ position: 'topleft' }).addTo(map);
 
   // Manage tab order for Leaflet-injected elements:
   // - Zoom buttons stay in tab order (they are our primary map keyboard controls)
@@ -587,14 +587,14 @@ onUnmounted(() => {
 }
 
 #theme-toggle {
-  width: 75px;
+  width: 73px;
   height: 40px;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   background: color-mix(in srgb, var(--color-bg-popup) 86%, transparent);
-  border: 1px solid var(--color-border);
+  border: 2px solid var(--color-border);
   border-radius: 999px;
   cursor: pointer;
   color: var(--color-text);
@@ -620,6 +620,7 @@ onUnmounted(() => {
   grid-template-columns: 1fr 1fr;
   align-items: center;
   padding: 4px;
+  transform: translate(0, -1px);
 }
 
 .theme-toggle__thumb {
@@ -667,7 +668,7 @@ onUnmounted(() => {
 }
 
 #theme-toggle[aria-checked="true"] .theme-toggle__thumb {
-  transform: translateX(37px);
+  transform: translateX(33px);
   background: linear-gradient(135deg, #d8b4fe 0%, #c084fc 44%, #9d4edd 100%);
   box-shadow: 0 8px 18px rgba(88, 28, 135, 0.34);
 }

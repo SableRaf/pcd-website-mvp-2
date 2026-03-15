@@ -94,7 +94,7 @@ onUnmounted(() => document.removeEventListener('click', handleOutsideClick));
   height: 40px;
   padding: 0 0.625rem;
   background: var(--color-bg-popup);
-  border: 1px solid var(--color-border);
+  border: 2px solid var(--color-border);
   border-radius: 8px;
   cursor: pointer;
   color: var(--color-text);
