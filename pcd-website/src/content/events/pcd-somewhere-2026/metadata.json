@@ -1,0 +1,37 @@
+{
+  "id": "pcd-somewhere-2026",
+  "organizers": [],
+  "primary_contact": {
+    "name": "Jane Doe",
+    "email": "janedoe@email.com"
+  },
+  "organization_name": "",
+  "organization_url": "https://creativecode.berlin",
+  "organization_type": "Other",
+  "online_event": false,
+  "event_url": "",
+  "event_name": "PCD @ Somewhere",
+  "event_location": {
+    "address": "Test address",
+    "plus_code": "9F25J3G8+GQ"
+  },
+  "event_date": "2026-10-19",
+  "event_end_date": "2027-10-20",
+  "event_start_time": "",
+  "event_end_time": "",
+  "event_short_description": "",
+  "event_activities": [
+    "Show-and-tell"
+  ],
+  "event_page_url": "",
+  "forum_thread_url": "https://discourse.processing.org/t/pcd-worldwide-2026-call-for-organizers/48081",
+  "city": "",
+  "country": "",
+  "placeholder": false,
+  "intake": {
+    "issue_number": 4,
+    "submitted_by_github": "SableRaf",
+    "submitted_date": "2026-03-15",
+    "maintainer_notes": ""
+  }
+}
