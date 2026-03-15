@@ -101,7 +101,8 @@ onUnmounted(() => document.removeEventListener('click', handleOutsideClick));
   font-family: var(--font-family);
   font-size: 0.8125rem;
   font-weight: 600;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 28px rgba(18, 19, 33, 0.18);
+  backdrop-filter: blur(14px);
   transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
   white-space: nowrap;
 }
@@ -166,13 +167,4 @@ onUnmounted(() => document.removeEventListener('click', handleOutsideClick));
   font-weight: 600;
 }
 
-@media (max-width: 480px) {
-  .lang-current {
-    display: none;
-  }
-
-  .lang-chevron {
-    display: none;
-  }
-}
 </style>
