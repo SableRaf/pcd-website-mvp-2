@@ -195,17 +195,54 @@ async function resolvePlusCode(rawValue, city, country) {
 
   if (!olc) return { code: null, note: null };
 
-  // Try to extract a leading Plus Code from concatenated input (e.g. QX5Q+C5DENVER)
+  // Try to extract a Plus Code from anywhere in the input (e.g. "My code: QX5Q+C5DENVER").
+  // No leading anchor so we match even with arbitrary prefix text.
+  // Minimum 2 chars before '+' to support short codes like "5Q+C5DENVER".
+  // Greedy 2–3 chars after '+' may over-capture when the city starts with OLC-valid chars
+  // (e.g. Vancouver → V); we resolve that below by trying progressively shorter suffixes.
+  const EXTRACT_RE = /([23456789CFGHJMPQRVWX]{2,8}\+[23456789CFGHJMPQRVWX]{2,3})/i;
+  const match = normalized.match(EXTRACT_RE);
+
   let shortCode = normalized;
-  const extracted = normalized.match(/^([23456789CFGHJMPQRVWX]{4,8}\+[23456789CFGHJMPQRVWX]{2,3})/i);
-  if (extracted) {
-    shortCode = extracted[1].toUpperCase();
+  let locationHint = '';
+
+  if (match) {
+    const [fullMatch, candidate] = match;
+    const plusIdx = candidate.indexOf('+');
+    const codePrefix = candidate.slice(0, plusIdx);
+    const greedySuffix = candidate.slice(plusIdx + 1);
+
+    // Try suffix lengths from longest (greedy) down to 2; take first that isShort().
+    shortCode = candidate;
+    for (let len = greedySuffix.length; len >= 2; len--) {
+      const probe = `${codePrefix}+${greedySuffix.slice(0, len)}`;
+      if (olc.isShort(probe)) {
+        shortCode = probe;
+        break;
+      }
+    }
+
+    // Extract any trailing non-OLC text as a location hint (e.g. "DENVER,COLORADO").
+    // Used only when the city/country form fields are empty.
+    const afterCode = normalized.slice(match.index + fullMatch.length);
+    if (afterCode) {
+      locationHint = afterCode
+        .replace(/,/g, ' ')
+        .trim()
+        .toLowerCase()
+        .replace(/\b\w/g, (c) => c.toUpperCase());
+    }
   }
 
-  // Attempt recovery if we have a short OLC and a location reference
-  if (olc.isShort(shortCode) && (city || country)) {
+  // Attempt recovery if we have a short OLC and a location reference.
+  // Prefer explicit city/country fields; fall back to the hint extracted from the input.
+  const locationRef = (city || country)
+    ? [city, country].filter(Boolean).join(' ')
+    : locationHint;
+
+  if (olc.isShort(shortCode) && locationRef) {
     try {
-      const query = encodeURIComponent([city, country].filter(Boolean).join(' '));
+      const query = encodeURIComponent(locationRef);
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`,
         { headers: { 'User-Agent': 'PCD-Event-Intake/1.0' } },
