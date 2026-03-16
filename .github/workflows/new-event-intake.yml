@@ -81,6 +81,8 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
+      - name: Install script dependencies
+        run: npm install --prefix /tmp/script-deps open-location-code
       - name: Generate event files from issue
         id: generate
         run: node .github/scripts/process-new-event-issue.mjs
@@ -116,7 +118,7 @@ jobs:
 
   handle-validation-failure:
     needs: process-submission
-    if: needs.process-submission.outputs.valid == 'false'
+    if: needs.process-submission.result == 'failure' || needs.process-submission.outputs.valid == 'false'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -262,7 +264,7 @@ jobs:
               marker,
               'Thank you for your submission! 🎉',
               '',
-              `**${process.env.EVENT_NAME}** has been successfully parsed and a pull request has been opened for review: #${process.env.PR_NUMBER}).`,
+              `**${process.env.EVENT_NAME}** has been successfully parsed and a pull request has been opened for review: [#${process.env.PR_NUMBER}](${process.env.PR_URL}).`,
               '',
               'Once the PR is merged, your event will be added to the map at https://day.processing.org.',
             ].join('\n');
