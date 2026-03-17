@@ -11,6 +11,15 @@ body:
     validations:
       required: true
 
+  - type: input
+    id: event_page_url
+    attributes:
+      label: Event Page URL
+      description: URL of the event page with the content issue.
+      placeholder: https://day.processing.org/event/pcd-example-city-2026/
+    validations:
+      required: true
+
   - type: dropdown
     id: issue_type
     attributes:
