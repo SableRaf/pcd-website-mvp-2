@@ -49,6 +49,10 @@
   box-sizing: border-box;
 }
 
+button, a[role="button"] {
+  user-select: none;
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -148,6 +152,7 @@ html.theme-transition *::after {
   backdrop-filter: blur(14px);
   transition: background-color 0.15s ease, box-shadow 0.15s ease;
   cursor: pointer;
+  user-select: none;
 }
 
 #host-btn:hover {
