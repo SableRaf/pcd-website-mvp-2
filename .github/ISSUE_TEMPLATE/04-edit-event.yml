@@ -10,12 +10,17 @@ body:
       value: |
         <!-- edit-event-template -->
         Everything submitted here will be publicly visible online. Please avoid including any private or sensitive information in the form.
-  - type: input
-    id: event_id
+  - type: markdown
     attributes:
-      label: Event ID
-      description: This is the internal ID of the event in our database. You can find this in the URL of the event details page (e.g. `https://pcd2026.processing.org/events/pcd-mycity-2026` → `pcd-mycity-2026` is the event ID). This field is required to identify which event you want to edit.
-      placeholder: PCD @ Example City
+      value: |
+        > [!TIP]
+        > For the fastest experience, go to your event's page on the PCD map and scroll down to the **Edit event data** link — it will open this form with all fields pre-populated.
+  - type: input
+    id: canonical_id
+    attributes:
+      label: Event canonical ID
+      description: The full canonical ID of the event. You can find it in the URL of the event details page (e.g. `https://day.processing.org/event/pcd-mycity-2026-a1b2c3d/` → `pcd-mycity-2026-a1b2c3d` is the canonical ID). This field is required to identify which event you want to edit.
+      placeholder: pcd-mycity-2026-a1b2c3d
     validations:
       required: true
   - type: input
