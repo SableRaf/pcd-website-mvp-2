@@ -26,16 +26,11 @@ body:
       placeholder: https://discourse.processing.org/t/pcd-worldwide-2026/48081
     validations:
       required: true
-  - type: markdown
-    attributes:
-      value: |
-        > [!NOTE]
-        > Full codes of 10 or 11 characters long (e.g. 9F4MFCCM+JF) are preferred, but most standard plus code formats are accepted. This code is used to accurately place your event on the map.
   - type: input
     id: plus_code
     attributes:
-      label: Map placement
-      description: Find or verify the plus code for your event location at https://plus.codes. 
+      label: Plus Code for map placement
+      description: Find or verify the plus code for your event location at https://plus.codes. Full codes (e.g. 9F4MFCCM+JF) are preferred, but most standard plus code formats are accepted.
       placeholder: XXXXXXXX+XX
     validations:
       required: true
