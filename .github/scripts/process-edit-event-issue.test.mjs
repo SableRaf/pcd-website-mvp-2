@@ -18,6 +18,7 @@ const EVENTS_DIR = path.join(REPO_ROOT, 'pcd-website/src/content/events');
 
 const TEST_EVENT_ID = 'pcd-edit-test-city-2026';
 const TEST_EVENT_DIR = path.join(EVENTS_DIR, TEST_EVENT_ID);
+const TEST_CANONICAL_ID = `${TEST_EVENT_ID}-abc1234`;
 
 const EXISTING_META = {
   id: TEST_EVENT_ID,
@@ -53,7 +54,7 @@ function makeEventPayload(body, { number = 10, login = 'edituser' } = {}) {
 }
 
 function makeValidEditBody({
-  eventId = TEST_EVENT_ID,
+  canonicalId = TEST_CANONICAL_ID,
   eventName = 'PCD @ Edit Test City',
   plusCode = '8FW4V75V+8Q',
   format = 'In person',
@@ -67,8 +68,8 @@ function makeValidEditBody({
   activities = '- [x] Live coding\n- [ ] Exhibition\n',
 } = {}) {
   return [
-    '### Event ID',
-    eventId,
+    '### Event canonical ID',
+    canonicalId,
     '',
     '### Event name',
     eventName,
@@ -245,17 +246,17 @@ describe('process-edit-event-issue', () => {
     assert.deepEqual(meta.event_activities, ['Live coding']);
   });
 
-  test('event directory does not exist causes valid=false', async () => {
-    await fs.rm(TEST_EVENT_DIR, { recursive: true, force: true });
-    const { outputs } = await runScript(makeValidEditBody(), { tmpDir, number: 14 });
+  test('unknown canonical ID causes valid=false', async () => {
+    const body = makeValidEditBody({ canonicalId: 'pcd-unknown-2026-0000000' });
+    const { outputs } = await runScript(body, { tmpDir, number: 14 });
     assert.equal(outputs.valid, 'false');
 
     const commentPath = outputs.validation_comment_path;
     const comment = await fs.readFile(commentPath, 'utf8');
-    assert.ok(comment.includes(TEST_EVENT_ID), 'validation comment should mention the missing event id');
+    assert.ok(comment.includes('pcd-unknown-2026-0000000'), 'validation comment should mention the unknown canonical id');
   });
 
-  test('missing ### Event ID heading causes valid=skip', async () => {
+  test('missing ### Event canonical ID heading causes valid=skip', async () => {
     const body = '### Event name\nPCD @ Test\n### Map placement\n8FW4V75V+8Q\n';
     const { outputs } = await runScript(body, { tmpDir, number: 15 });
     assert.equal(outputs.valid, 'skip');

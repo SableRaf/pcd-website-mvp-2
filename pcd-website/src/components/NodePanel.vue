@@ -187,7 +187,7 @@ function getReportIssueHref(node: Node): string {
 
 function getEditEventHref(node: Node): string {
   const params = new URLSearchParams();
-  params.set('event_id', node.id);
+  params.set('canonical_id', `${node.id}-${node.uid}`);
   params.set('event_name', node.event_name);
   if (node.forum_thread_url) params.set('forum_thread_url', node.forum_thread_url);
   params.set('plus_code', node.plus_code);
@@ -207,6 +207,28 @@ function getEditEventHref(node: Node): string {
   if (node.organizers.length) params.set('organizers', node.organizers.map(o => o.name).join('\n'));
   params.set('short_description', node.event_short_description);
   if (node.details_markdown) params.set('full_description', node.details_markdown);
+  const formatValue = node.online_event ? `Online` : `In person`;
+  const refLines: string[] = [];
+  refLines.push(`     Event format: "${formatValue}"`);
+  if (node.organization_type) refLines.push(`     Organization type: "${node.organization_type}"`);
+  if (node.event_activities.length) {
+    refLines.push(`     Event activities:`);
+    node.event_activities.forEach(a => refLines.push(`     - "${a}"`));
+  }
+  if (refLines.length) {
+    params.set('maintainer_notes', [
+      '<!-- ⚠️ GitHub does not support pre-filling dropdown or checkbox fields via URL ⚠️',
+      '',
+      '     Use the form fields above to enter or update the information.',
+      '',
+      '     Recorded data for reference only. Do NOT edit this section:',
+      '',
+      ...refLines,
+      '',
+      '-->',
+    ].join('\n'));
+  }
+  params.set('title', `Edit data for **${node.event_name}**`);
   return `${GITHUB_EDIT_EVENT_URL}&${params.toString().replace(/\+/g, '%20')}`;
 }
 

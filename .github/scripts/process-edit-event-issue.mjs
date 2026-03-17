@@ -77,9 +77,9 @@ function buildPrBody(number, eventName, submitterLogin, isOnlineEvent, eventDate
 
 console.log(`[process-edit-event-issue] issue #${issueNumber}, body length: ${issueBody.length}`);
 
-// Skip if this is NOT an edit-event issue (must have ### Event ID heading)
-if (!issueBody.includes('### Event ID')) {
-  console.log('[process-edit-event-issue] ### Event ID heading not found — skipping (not an edit event issue)');
+// Skip if this is NOT an edit-event issue (must have ### Event canonical ID heading)
+if (!issueBody.includes('### Event canonical ID')) {
+  console.log('[process-edit-event-issue] ### Event canonical ID heading not found — skipping (not an edit event issue)');
   await setOutput('valid', 'skip');
   process.exit(0);
 }
@@ -88,7 +88,7 @@ async function main() {
   const fields = parseIssueSections(issueBody);
   const errors = [];
 
-  const eventId = required(fields, 'Event ID', errors);
+  const canonicalId = required(fields, 'Event canonical ID', errors);
   const eventName = required(fields, 'Event name', errors);
   const rawPlusCode = required(fields, 'Map placement', errors, {
     field: 'Map placement (Plus Code)',
@@ -120,33 +120,51 @@ async function main() {
   const forumThreadUrl = fields.get('Forum discussion URL')?.trim() ?? '';
   const maintainerNotes = fields.get('Additional notes')?.trim() ?? '';
 
-  if (!eventId) {
-    // eventId required error already pushed above
+  // Parse uid from canonical ID (format: <slug>-<7hexchars>)
+  let submittedUid = null;
+  let eventId = null;
+  if (canonicalId) {
+    const match = canonicalId.trim().match(/^(.+)-([0-9a-f]{7})$/);
+    if (match) {
+      eventId = match[1];
+      submittedUid = match[2];
+    } else {
+      errors.push({ field: 'Event canonical ID', found: canonicalId, message: 'Not a valid canonical event ID. It should look like `pcd-mycity-2026-a1b2c3d`.' });
+    }
   }
 
-  const eventDirPath = eventId
-    ? path.join(WORKSPACE, 'pcd-website/src/content/events', eventId)
-    : null;
+  // Find event directory by scanning metadata files for matching uid
+  let eventDirPath = null;
+  if (submittedUid && errors.length === 0) {
+    const allEvents = await fs.readdir(path.join(WORKSPACE, 'pcd-website/src/content/events'));
+    for (const dir of allEvents) {
+      const metaPath = path.join(WORKSPACE, 'pcd-website/src/content/events', dir, 'metadata.json');
+      try {
+        const meta = JSON.parse(await fs.readFile(metaPath, 'utf8'));
+        if (meta.uid === submittedUid) {
+          eventDirPath = path.join(WORKSPACE, 'pcd-website/src/content/events', dir);
+          eventId = meta.id;
+          break;
+        }
+      } catch { /* skip unreadable dirs */ }
+    }
+    if (!eventDirPath) {
+      errors.push({ field: 'Event canonical ID', found: canonicalId, message: `No event with canonical ID \`${canonicalId}\` exists. Please double-check and try again.` });
+    }
+  }
+
   const markdownPath = eventDirPath ? path.join(eventDirPath, 'content.md') : null;
   const metadataPath = eventDirPath ? path.join(eventDirPath, 'metadata.json') : null;
 
-  // Check event exists (only if eventId was provided)
+  // Load existing metadata and content (only if event was found)
   let existingMeta = null;
   let existingContent = null;
-  if (eventId && errors.length === 0) {
+  if (eventDirPath && errors.length === 0) {
+    existingMeta = JSON.parse(await fs.readFile(metadataPath, 'utf8'));
     try {
-      await fs.access(eventDirPath);
+      existingContent = await fs.readFile(markdownPath, 'utf8');
     } catch {
-      errors.push({ field: 'Event ID', found: eventId, message: `No event with ID \`${eventId}\` exists. Please double-check the event ID and try again.` });
-    }
-
-    if (errors.length === 0) {
-      existingMeta = JSON.parse(await fs.readFile(metadataPath, 'utf8'));
-      try {
-        existingContent = await fs.readFile(markdownPath, 'utf8');
-      } catch {
-        existingContent = null;
-      }
+      existingContent = null;
     }
   }
 
