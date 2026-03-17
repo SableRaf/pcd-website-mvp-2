@@ -206,7 +206,7 @@ function getEditEventHref(node: Node): string {
   if (node.event_end_date) params.set('event_end_date', node.event_end_date);
   if (node.event_start_time) params.set('event_start_time', node.event_start_time);
   if (node.event_end_time) params.set('event_end_time', node.event_end_time);
-  params.set('event_page_url', getShareUrl(node));
+  if (node.event_page_url) params.set('event_page_url', node.event_page_url);
   if (node.organizers.length) params.set('organizers', node.organizers.map(o => o.name).join('\n'));
   params.set('short_description', node.event_short_description);
   if (node.details_markdown) params.set('full_description', node.details_markdown);
