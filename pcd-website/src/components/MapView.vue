@@ -339,9 +339,7 @@ onMounted(async () => {
   const eventId = props.initialEventId ?? new URLSearchParams(window.location.search).get('event');
   const linkedNode = eventId ? props.nodes.find((n) => n.id === eventId || n.uid === eventId) : null;
 
-  if (linkedNode) {
-    focusNode(linkedNode); // instant, panel-aware
-  } else {
+  if (!linkedNode) {
     // Try to center on visitor's location, fall back to world view
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -441,20 +439,36 @@ onMounted(async () => {
     clusters.forEach(el => pane.insertBefore(el, pane.firstChild));
   }
 
+  // Sync all marker DOM state: accessible labels, pane order, and active highlight.
+  // Called on initial marker paint and after any cluster animation that rebuilds elements.
+  function syncMarkerDOM() {
+    applyMarkerLabels();
+    sortMarkerPane();
+    setActiveMarker(selectedNode.value?.id ?? null);
+  }
+
   // Watch the marker pane for DOM changes on initial load — marker elements are
   // created lazily by the cluster group after the first setView, so we can't
   // rely on a fixed timeout. Disconnect after the first batch of markers appear.
   const markerPane = map.getPanes().markerPane;
   if (markerPane) {
     const observer = new MutationObserver(() => {
-      applyMarkerLabels();
-      sortMarkerPane();
+      syncMarkerDOM();
       observer.disconnect();
     });
     observer.observe(markerPane, { childList: true, subtree: false });
   }
 
-  clusterGroup.on('animationend', () => { applyMarkerLabels(); sortMarkerPane(); });
+  // Deep link: open the panel for the linked event. Deferred to here so that:
+  // (1) markerMap is fully populated, and (2) the MutationObserver above is
+  // already watching — focusNode calls setView which triggers Leaflet's lazy
+  // marker DOM creation, and the observer fires syncMarkerDOM() to apply the
+  // active highlight once elements exist.
+  if (linkedNode) {
+    focusNode(linkedNode);
+  }
+
+  clusterGroup.on('animationend', () => { syncMarkerDOM(); });
 
   // When a cluster spiderfies, move its child marker elements immediately after
   // the cluster's own element in the DOM so screen readers encounter them next.
@@ -476,6 +490,7 @@ onMounted(async () => {
     // Move focus to the first child marker so Tab continues from there
     const firstChildEl = e.markers[0]?.getElement?.();
     firstChildEl?.focus();
+    setActiveMarker(selectedNode.value?.id ?? null);
   });
 
   // Sliding window: pan just enough to keep focused markers in the safe zone
