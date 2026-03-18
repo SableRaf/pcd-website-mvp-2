@@ -129,6 +129,35 @@ function setActiveMarker(nodeId: string | null) {
   });
 }
 
+const PANEL_BREAKPOINT = 720; // matches NodePanel.vue @media (max-width: 720px)
+
+function getPanelWidth(): number {
+  if (window.innerWidth <= PANEL_BREAKPOINT) return 0; // full-width on mobile
+  return Math.min(Math.max(window.innerWidth * 0.4, 320), 520); // clamp(320px, 40vw, 520px)
+}
+
+function focusNode(node: Node, { animate = false, zoom = 5 }: { animate?: boolean; zoom?: number } = {}) {
+  if (!mapInstance) return;
+  selectedNode.value = null;
+  const map = mapInstance;
+  const panelWidth = getPanelWidth();
+
+  const onSettle = () => {
+    if (panelWidth > 0) {
+      map.panBy([panelWidth / 2, 0], { animate: false });
+    }
+    openPanel(node);
+  };
+
+  if (animate) {
+    map.once('moveend', onSettle);
+    map.flyTo([node.lat, node.lng], zoom, { duration: 1 });
+  } else {
+    map.setView([node.lat, node.lng], zoom);
+    onSettle();
+  }
+}
+
 function openPanel(node: Node) {
   selectedNode.value = node;
   listOpen.value = false;
@@ -181,15 +210,12 @@ function panToKeepInView(lat: number, lng: number): void {
 }
 
 function onNodeSelect(node: Node) {
-  selectedNode.value = null;
-
+  if (!mapInstance) return;
   const marker = markerMap.get(node.id);
-  if (mapInstance && marker) {
-    mapInstance.flyTo([node.lat, node.lng], 5, { duration: 1 });
-    setTimeout(() => {
-      openPanel(node);
-    }, 1100);
-  }
+  if (!marker) return;
+  closeList();
+  mapInstance.flyTo([node.lat, node.lng], 5, { duration: 1 });
+  mapInstance.once('moveend', () => marker.openPopup());
 }
 
 function handleKeydown(e: KeyboardEvent) {
@@ -309,15 +335,23 @@ onMounted(async () => {
 
   });
 
-  // Try to center on visitor's location, fall back to world view
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => map.setView([pos.coords.latitude, pos.coords.longitude], 5),
-      () => map.setView([20, 10], 3),
-      { timeout: 5000 }
-    );
+  // Deep link: zoom to event location, skip geolocation
+  const eventId = props.initialEventId ?? new URLSearchParams(window.location.search).get('event');
+  const linkedNode = eventId ? props.nodes.find((n) => n.id === eventId || n.uid === eventId) : null;
+
+  if (linkedNode) {
+    focusNode(linkedNode); // instant, panel-aware
   } else {
-    map.setView([20, 10], 3);
+    // Try to center on visitor's location, fall back to world view
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => map.setView([pos.coords.latitude, pos.coords.longitude], 5),
+        () => map.setView([20, 10], 3),
+        { timeout: 5000 }
+      );
+    } else {
+      map.setView([20, 10], 3);
+    }
   }
 
   setMapStyle(getInitialStyle(), map, L);
@@ -586,12 +620,6 @@ onMounted(async () => {
   // Global keyboard shortcuts
   document.addEventListener('keydown', handleKeydown);
 
-  // Deep link: ?event=<node-id> auto-opens the panel for that event
-  const eventId = props.initialEventId ?? new URLSearchParams(window.location.search).get('event');
-  if (eventId) {
-    const node = props.nodes.find((n) => n.id === eventId || n.uid === eventId);
-    if (node) openPanel(node);
-  }
 
   // Update document-level text when locale changes
   watch(currentLocale, () => {
