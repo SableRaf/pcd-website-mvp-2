@@ -35,6 +35,12 @@ jobs:
       pr_label: ${{ steps.generate.outputs.pr_label }}
       action_verb: ${{ steps.generate.outputs.action_verb }}
     steps:
+      - name: Log trigger context
+        run: |
+          echo "event_action=${{ github.event.action }}"
+          echo "issue_number=${{ github.event.issue.number }}"
+          echo "issue_labels=${{ join(github.event.issue.labels.*.name, ', ') }}"
+          echo "sender=${{ github.event.sender.login }}"
       - name: Label and assign intake issue
         uses: actions/github-script@v8
         with:
@@ -96,6 +102,12 @@ jobs:
           echo "event_name=${{ steps.generate.outputs.event_name }}"
           echo "validation_comment_path=${{ steps.generate.outputs.validation_comment_path }}"
           echo "pr_body_path=${{ steps.generate.outputs.pr_body_path }}"
+      - name: Log PR body
+        if: steps.generate.outputs.valid == 'true'
+        run: cat "${{ steps.generate.outputs.pr_body_path }}"
+      - name: Log validation comment
+        if: steps.generate.outputs.valid == 'false'
+        run: cat "${{ steps.generate.outputs.validation_comment_path }}"
       - name: Upload event files artifact
         if: steps.generate.outputs.valid == 'true'
         uses: actions/upload-artifact@v4
@@ -136,6 +148,12 @@ jobs:
       pr_label: ${{ steps.generate.outputs.pr_label }}
       action_verb: ${{ steps.generate.outputs.action_verb }}
     steps:
+      - name: Log trigger context
+        run: |
+          echo "event_action=${{ github.event.action }}"
+          echo "issue_number=${{ github.event.issue.number }}"
+          echo "issue_labels=${{ join(github.event.issue.labels.*.name, ', ') }}"
+          echo "sender=${{ github.event.sender.login }}"
       - name: Label and assign intake issue
         uses: actions/github-script@v8
         with:
@@ -197,6 +215,12 @@ jobs:
           echo "event_name=${{ steps.generate.outputs.event_name }}"
           echo "validation_comment_path=${{ steps.generate.outputs.validation_comment_path }}"
           echo "pr_body_path=${{ steps.generate.outputs.pr_body_path }}"
+      - name: Log PR body
+        if: steps.generate.outputs.valid == 'true'
+        run: cat "${{ steps.generate.outputs.pr_body_path }}"
+      - name: Log validation comment
+        if: steps.generate.outputs.valid == 'false'
+        run: cat "${{ steps.generate.outputs.validation_comment_path }}"
       - name: Upload event files artifact
         if: steps.generate.outputs.valid == 'true'
         uses: actions/upload-artifact@v4
@@ -299,6 +323,12 @@ jobs:
         with:
           name: pr-body-${{ github.event.issue.number }}
           path: /tmp/pr-body
+      - name: Log resolved PR inputs
+        run: |
+          echo "branch=${{ needs.process-new-event.outputs.branch || needs.process-edit-event.outputs.branch }}"
+          echo "title=${{ needs.process-new-event.outputs.pr_title || needs.process-edit-event.outputs.pr_title }}"
+          echo "body_path=/tmp/pr-body/pr-body-${{ github.event.issue.number }}.md"
+          cat "/tmp/pr-body/pr-body-${{ github.event.issue.number }}.md"
       - name: Create pull request
         id: create_pr
         uses: peter-evans/create-pull-request@v8
@@ -311,6 +341,11 @@ jobs:
           commit-message: ${{ needs.process-new-event.outputs.commit_message || needs.process-edit-event.outputs.commit_message }}
           title: ${{ needs.process-new-event.outputs.pr_title || needs.process-edit-event.outputs.pr_title }}
           body-path: /tmp/pr-body/pr-body-${{ github.event.issue.number }}.md
+      - name: Log create-pr outputs
+        if: always()
+        run: |
+          echo "pull-request-number=${{ steps.create_pr.outputs.pull-request-number }}"
+          echo "pull-request-url=${{ steps.create_pr.outputs.pull-request-url }}"
 
   post-pr-actions:
     needs: [process-new-event, process-edit-event, create-pr]
