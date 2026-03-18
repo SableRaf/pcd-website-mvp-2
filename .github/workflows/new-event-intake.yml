@@ -314,7 +314,7 @@ jobs:
 
   post-pr-actions:
     needs: [process-new-event, process-edit-event, create-pr]
-    if: needs.create-pr.outputs.pull-request-number != ''
+    if: always() && needs.create-pr.outputs.pull-request-number != ''
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
