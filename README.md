@@ -1,8 +1,5 @@
-
-> [!NOTE] 
-> This project is in early development. The map and event data are not yet complete, but we welcome contributions from the community! 
-
-[Submit your event](https://github.com/processing/processing-community-day/issues/new?template=new-event.yml) to the map!
+> [!TIP]
+> Organizing a PCD, or just thinking about it? Come say hi on the [forum thread](https://discourse.processing.org/t/pcd-worldwide-2026-call-for-organizers/48081). You can [add your event to the map](https://github.com/processing/processing-community-day/issues/new?template=new-event.yml) anytime, even if it’s still a work in progress.
 
 # Processing Community Day Website
 
