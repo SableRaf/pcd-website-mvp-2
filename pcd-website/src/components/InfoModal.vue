@@ -76,7 +76,11 @@ onUnmounted(() => {
             {{ props.autoOpened ? t('nav.info_modal_go_to_map') : t('nav.info_modal_back_to_map') }}
           </button>
           <label v-if="props.autoOpened" class="info-modal-suppress">
-            <input type="checkbox" v-model="dontShowAgain" />
+            <input
+              type="checkbox"
+              v-model="dontShowAgain"
+              @keydown.enter.prevent="dontShowAgain = !dontShowAgain"
+            />
             {{ t('nav.info_modal_dont_show_again') }}
           </label>
         </div>
