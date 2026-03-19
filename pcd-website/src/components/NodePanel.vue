@@ -478,7 +478,7 @@ const calLinks = computed(() => props.node && !props.node.date_tbd ? calendarLin
         </div>
 
         <!-- Links section -->
-        <div v-if="node.event_page_url || node.primary_contact.email" class="panel-links">
+        <div v-if="node.event_page_url || node.primary_contact.email || (!node.online_event && node.event_url)" class="panel-links">
           <hr class="panel-separator" aria-hidden="true" />
           <a
             v-if="!node.online_event && !node.location_tbd"
@@ -499,6 +499,17 @@ const calLinks = computed(() => props.node && !props.node.date_tbd ? calendarLin
           >
             <Icon icon="bi:envelope" width="1em" height="1em" aria-hidden="true" class="panel-link-icon" />
             <span>{{ node.primary_contact.email }}</span>
+          </a>
+          <a
+            v-if="!node.online_event && node.event_url"
+            :href="node.event_url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="panel-link-row"
+            :title="`Visit ${node.event_url}`"
+          >
+            <Icon icon="bi:globe" width="1em" height="1em" aria-hidden="true" class="panel-link-icon" />
+            <span>{{ node.event_url }}</span>
           </a>
           <a
             v-if="node.event_page_url"
