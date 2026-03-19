@@ -1,0 +1,66 @@
+{
+  "id": "pcd-santiago-2026",
+  "uid": "2deecd2",
+  "organizers": [
+    {
+      "name": "Yamna Carrión"
+    },
+    {
+      "name": "Santiago Gaete"
+    },
+    {
+      "name": "Joaquín González"
+    },
+    {
+      "name": "Bernardita Jesús"
+    },
+    {
+      "name": "Aarón Montoya"
+    },
+    {
+      "name": "Sofía Pérez"
+    },
+    {
+      "name": "Félix Rodríguez"
+    }
+  ],
+  "primary_contact": {
+    "name": "Joaquín González",
+    "email": "joaquin.gonzalez7@mail.udp.cl"
+  },
+  "organization_name": "Laboratorio de Interacción Digital",
+  "organization_url": "https://github.com/disenoUDP/lid",
+  "organization_type": "School, university, library",
+  "online_event": false,
+  "event_url": "",
+  "event_name": "PCD @ Santiago 2026",
+  "event_location": {
+    "address": "",
+    "plus_code": "47RFH82M+579"
+  },
+  "event_date": "",
+  "event_start_time": "",
+  "event_end_time": "",
+  "event_short_description": "LID + CRTIC Processing Community Day",
+  "event_activities": [
+    "Show-and-tell",
+    "Hands-on workshops",
+    "Exhibition",
+    "Panel discussions",
+    "Beginner introductions to Processing or p5.js",
+    "Student project presentations",
+    "Screening",
+    "Other"
+  ],
+  "event_page_url": "",
+  "forum_thread_url": "https://discourse.processing.org/t/pcd-santiago-2026/48239",
+  "city": "Santiago",
+  "country": "Chile",
+  "placeholder": false,
+  "intake": {
+    "issue_number": 40,
+    "submitted_by_github": "santiagoClifford",
+    "submitted_date": "2026-03-19",
+    "maintainer_notes": ""
+  }
+}
