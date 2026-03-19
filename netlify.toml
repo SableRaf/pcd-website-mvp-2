@@ -5,3 +5,13 @@
 
 [build.environment]
   DEPLOY_TARGET = "netlify"
+
+[[redirects]]
+  from = "/_astro/og-image*"
+  to = "/og-image.png"
+  status = 301
+
+[[redirects]]
+  from = "/_astro/PCD2026_og-image_tinyfied*"
+  to = "/og-image.png"
+  status = 301
