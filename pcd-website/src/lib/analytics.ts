@@ -11,6 +11,7 @@ export type AnalyticsEvent =
 
 export function trackEvent(name: AnalyticsEvent): void {
   if (typeof window !== 'undefined') {
+    console.debug('[analytics] trackEvent fired for event:', name);
     window.fathom?.trackEvent(name);
   }
 }

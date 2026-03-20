@@ -84,6 +84,7 @@ Event data lives in `src/content/events/<event-id>/`:
 | `src/components/NodePanel.vue` | Slide-in event detail panel with minimap, calendar links, share button |
 | `src/components/NodeList.vue` | Alphabetical event list overlay with map style switcher + dark mode toggle |
 | `src/components/LanguageSwitcher.vue` | Language selector dropdown in the top bar |
+| `src/lib/analytics.ts` | `trackEvent()` Fathom helper + `AnalyticsEvent` type + event-name constants |
 | `src/lib/nodes.ts` | `Node` interface + `loadNodes()` |
 | `src/lib/format.ts` | `formatDate()`, `formatDateRange()`, `calendarLinks()`, etc. |
 | `src/lib/popup.ts` | Leaflet popup HTML generation (`makePopupContent()`) |
