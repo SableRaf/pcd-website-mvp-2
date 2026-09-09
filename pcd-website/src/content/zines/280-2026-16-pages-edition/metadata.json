@@ -1,0 +1,40 @@
+{
+  "id": "280-2026-16-pages-edition",
+  "title": "<=280, 2026 16 pages edition",
+  "topic": "Processing programs that fit in 280 chars or less",
+  "created_by": "Jean-Noël Lafargue",
+  "summary": "16 programs that fit in 280 characters",
+  "downloads": [
+    {
+      "file": "livreOrdreDesPages.pdf",
+      "file_size": "8.4 MB",
+      "role": "reader-order"
+    },
+    {
+      "file": "A4.pdf",
+      "file_size": "8.4 MB",
+      "role": "print-ready"
+    },
+    {
+      "file": "image.png",
+      "file_size": "216.6 kB"
+    }
+  ],
+  "license": "CC BY-SA 4.0",
+  "intake": {
+    "issue_number": 233,
+    "submitted_by_github": "Jean-no",
+    "submitted_date": "2026-09-09",
+    "maintainer_notes": ""
+  },
+  "languages": [
+    "English"
+  ],
+  "created_by_url": "https://www.instagram.com/jeannoellafargue/",
+  "cover": {
+    "src": "cover.png",
+    "alt": "<=280, 2026 16 pages edition"
+  },
+  "zine_format": "Single-sheet 16 pages zine (fold three times)",
+  "materials": "Utility knife or scissors. Stappler."
+}
