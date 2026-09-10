@@ -58,7 +58,7 @@ const permalink = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).hr
         {backLink
           ? <BackButton href={backLink.href} label={backLink.label} />
           : eyebrow && <p class="prose__eyebrow">{eyebrow}</p>}
-        <div class="docs-title-row">
+        <div class:list={['docs-title-row', { 'docs-title-row--logo': headingLogo }]}>
           <h1>{headingLogo
             ? <Image class="docs-heading-logo" src={headingLogo} alt={heading ?? title} />
             : heading ?? title}</h1>
@@ -75,6 +75,11 @@ const permalink = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).hr
 </BaseLayout>
 
 <style>
+  .docs-title-row--logo {
+    row-gap: var(--sp-6);
+    margin-bottom: var(--sp-6);
+  }
+
   .docs-heading-logo {
     display: block;
     width: auto;
